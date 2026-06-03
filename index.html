@@ -681,26 +681,32 @@ img { max-width: 100%; }
 .hb-title em { font-style: italic; color: var(--c-gold); }
 .hb-sub { font-size: 12.5px; color: rgba(255,255,255,0.42); line-height: 1.6; }
 .hb-stats {
-  display: flex; gap: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px 0;
   margin-top: 18px;
   padding-top: 16px;
   border-top: 1px solid rgba(255,255,255,0.08);
-  flex-wrap: wrap;
 }
 .hb-stat {
   padding: 0 18px;
-  border-right: 1px solid rgba(255,255,255,0.08);
+  border-right: none;
+  min-width: 0;
 }
+.hb-stat:nth-child(odd) { padding-left: 0; }
+.hb-stat:nth-child(even) { border-left: 1px solid rgba(255,255,255,0.10); }
 .hb-stat:first-child { padding-left: 0; }
 .hb-stat:last-child { border-right: none; }
 .hb-stat-label {
   font-size: 9px; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.12em;
-  color: rgba(255,255,255,0.28); margin-bottom: 3px;
+  color: rgba(255,255,255,0.32); margin-bottom: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .hb-stat-val {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 14px; font-weight: 700; color: #fff;
+  font-size: 15px; font-weight: 700; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 /* KPI Grid */
@@ -719,6 +725,7 @@ img { max-width: 100%; }
   position: relative;
   overflow: hidden;
   transition: var(--trans);
+  min-width: 0;
 }
 .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 .kpi-card::after {
@@ -743,8 +750,10 @@ img { max-width: 100%; }
   color: var(--c-text); line-height: 1;
 }
 .kpi-value.xl {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px; font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 20px; font-weight: 700;
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
 }
 .kpi-sub {
   font-size: 10.5px; color: var(--c-text3); margin-top: 5px;
@@ -902,11 +911,17 @@ input:checked + .toggle-track::before { transform: translateX(18px); }
 table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 thead tr { background: var(--c-forest); }
 thead th {
-  color: rgba(255,255,255,0.85);
-  font-size: 10px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.07em;
-  padding: 10px 12px; text-align: left; white-space: nowrap;
+  color: rgba(255,255,255,0.88);
+  font-size: 10.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 11px 12px; text-align: left; white-space: nowrap;
+  vertical-align: middle;
 }
+/* Tabel biaya/investasi lebar → beri lebar minimum agar kolom proporsional & scroll halus (tidak berdesakan) */
+.tbl-wrap table:has(#inv-infra-tbody),
+.tbl-wrap table:has(#inv-starter-tbody),
+.tbl-wrap table:has(#ops-tbody),
+.tbl-wrap table:has(tr[data-fase]) { min-width: 660px; }
 tbody tr { border-bottom: 1px solid var(--c-border2); transition: background 0.12s; }
 tbody tr:last-child { border-bottom: none; }
 tbody tr:hover { background: var(--c-mint); }
@@ -928,6 +943,7 @@ td { padding: 9px 12px; color: var(--c-text); }
 .mono-cell {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px; font-weight: 600; color: var(--c-text2);
+  white-space: nowrap;
 }
 .mono-cell.green { color: var(--c-emerald); }
 .mono-cell.red { color: var(--c-ruby); }
@@ -1144,7 +1160,7 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
   padding: 16px 18px;
   color: #fff;
 }
-.hpp-main { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 800; color: var(--c-gold); margin: 5px 0; }
+.hpp-main { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: var(--c-gold); margin: 5px 0; }
 .hpp-sub { font-size: 11px; color: rgba(255,255,255,0.45); }
 
 /* Chart container */
@@ -1175,12 +1191,14 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
 .fc-name { font-size:12.5px; font-weight:700; color:var(--c-text); }
 .fc-days { font-size:10.5px; color:var(--c-text3); }
 .fc-weight { font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; text-align:right; }
-.ph-meta { display: flex; gap: 0; flex-wrap: wrap; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
-.ph-meta-item { padding: 0 18px; border-right: 1px solid rgba(255,255,255,0.08); }
+.ph-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 0; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
+.ph-meta-item { padding: 0 18px; border-right: none; min-width: 0; }
+.ph-meta-item:nth-child(odd) { padding-left: 0; }
+.ph-meta-item:nth-child(even) { border-left: 1px solid rgba(255,255,255,0.10); }
 .ph-meta-item:first-child { padding-left: 0; }
 .ph-meta-item:last-child { border-right: none; }
-.ph-meta-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.14em; color: rgba(255,255,255,0.3); margin-bottom: 3px; }
-.ph-meta-val { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: #fff; }
+.ph-meta-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.14em; color: rgba(255,255,255,0.32); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph-meta-val { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .p-section { background: var(--c-surface); border-radius: var(--r-md); border: 1px solid var(--c-border2); margin-bottom: 12px; overflow: hidden; }
 .p-section-head { background: var(--c-surface2); padding: 12px 16px; border-bottom: 1px solid var(--c-border2); display: flex; align-items: center; gap: 10px; }
 .p-section-num { width: 26px; height: 26px; border-radius: 50%; background: var(--c-forest); color: var(--c-gold); font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -2699,7 +2717,7 @@ DARURAT
     <div class="hb-title" style="font-size:20px;">Simulasi <em>What-If</em></div>
     <div class="hb-sub" data-id="whatif-sub">Uji skenario bisnis — dampak langsung ke laba & BEP</div>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch;">
+  <div class="m-stack" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch;">
     <div style="display:flex;flex-direction:column;">
       <div class="card" style="flex:1;display:flex;flex-direction:column;">
         <div class="card-head"><div class="card-title" data-id="card-wi-params">Atur Parameter Skenario</div></div>
@@ -2746,7 +2764,7 @@ DARURAT
           <div id="wi-badge" style="padding:9px 13px;border-radius:var(--r-sm);font-size:12.5px;font-weight:700;text-align:center;background:var(--c-mint);color:var(--c-text);margin-bottom:12px;" data-id="wi-badge-default">Skenario Normal</div>
           <div style="text-align:center;background:linear-gradient(135deg,#071A0C,#0D4025);border-radius:var(--r-md);padding:20px;margin-bottom:12px;">
             <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px;" data-id="wi-laba-label">Laba Bersih / Bulan</div>
-            <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:800;color:#fff;line-height:1;" id="wi-laba">—</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;letter-spacing:-1px;color:#fff;line-height:1.05;overflow-wrap:anywhere;" id="wi-laba">—</div>
             <div style="font-size:11.5px;color:rgba(255,255,255,0.38);margin-top:4px;" id="wi-margin">Margin —%</div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
