@@ -479,11 +479,18 @@ img { max-width: 100%; }
   gap: 3px;
   padding: 6px 2px;
   border-radius: 10px;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.55);
   transition: var(--trans);
   cursor: pointer;
   min-width: 0;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
   -webkit-tap-highlight-color: transparent;
+  font-family: inherit;
 }
 .bn-item svg { width: 24px; height: 24px; }
 .bn-item span {
@@ -493,9 +500,25 @@ img { max-width: 100%; }
 }
 .bn-item.active {
   color: #fff;
-  background: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.14) !important;
+  background-color: rgba(255,255,255,0.14) !important;
 }
 .bn-item.active svg { filter: drop-shadow(0 0 6px rgba(34,181,92,0.5)); }
+/* Tombol Scan Struk menonjol di tengah */
+.bn-scan { position: relative; }
+.bn-scan .bn-scan-circle {
+  display: flex; align-items: center; justify-content: center;
+  width: 50px; height: 50px; border-radius: 50%;
+  background: linear-gradient(135deg, #C8A44A, #B08D3A);
+  color: #07140A;
+  margin-top: -22px; margin-bottom: 1px;
+  box-shadow: 0 4px 14px rgba(200,164,74,0.5), 0 0 0 4px var(--c-surface, #fff);
+  border: 2px solid rgba(255,255,255,0.25);
+}
+.bn-scan .bn-scan-circle svg { width: 25px; height: 25px; }
+.bn-scan.active { background: transparent !important; }
+.bn-scan.active .bn-scan-circle { box-shadow: 0 4px 18px rgba(200,164,74,0.7), 0 0 0 4px var(--c-surface, #fff); }
+.bn-scan span:not(.bn-scan-circle) { color: var(--c-gold, #C8A44A); font-weight: 700; }
 .bn-more-sheet {
   display: none;
   position: fixed;
@@ -794,6 +817,9 @@ img { max-width: 100%; }
 }
 .form-input {
   width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
   padding: 9px 12px;
   border: 1.5px solid var(--c-border);
   border-radius: var(--r-sm);
@@ -810,7 +836,7 @@ img { max-width: 100%; }
 .form-input.mono { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; }
 .form-input[readonly] { background: var(--c-bg2); color: var(--c-text3); cursor: default; }
 select.form-input { cursor: pointer; }
-.form-field { margin-bottom: 12px; }
+.form-field { margin-bottom: 12px; min-width: 0; }
 .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 
@@ -1273,6 +1299,24 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
 .reminder-sub { font-size: 10.5px; color: var(--c-text3); margin-top: 1px; }
 .reminder-time { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600; color: var(--c-gold); white-space: nowrap; }
 
+/* LOCK BANNER (mode lihat-saja utk non-Mandor) */
+.lock-banner {
+  display: flex; align-items: center; gap: 9px;
+  background: linear-gradient(135deg, rgba(200,164,74,0.16), rgba(200,164,74,0.08));
+  border: 1px solid rgba(200,164,74,0.4);
+  color: var(--c-text);
+  border-radius: var(--r-md);
+  padding: 11px 14px; margin-bottom: 14px;
+  font-size: 12.5px; line-height: 1.5;
+}
+.lock-banner svg { color: var(--c-gold); }
+.page-locked input:disabled,
+.page-locked select:disabled,
+.page-locked textarea:disabled,
+.page-locked button:disabled {
+  opacity: 0.55; cursor: not-allowed;
+}
+
 /* RESPONSIVE */
 @media(max-width: 767px) {
   .sidebar { transform: translateX(-100%); }
@@ -1285,31 +1329,41 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .form-grid-2 { grid-template-columns: 1fr; }
   .form-grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .cycle-inputs { grid-template-columns: 1fr !important; }
   .hb-title { font-size: 22px; }
 
-  /* ANTI AUTO-ZOOM iOS: semua field input minimal 16px → Safari tidak zoom-in otomatis */
-  input, select, textarea, .editable-cell, .login-input, .gs-input {
+  /* ANTI AUTO-ZOOM iOS: SEMUA field input minimal 16px → Safari tidak zoom-in otomatis */
+  input, select, textarea,
+  input[type=text], input[type=number], input[type=date], input[type=tel], input[type=email],
+  .form-input, .editable-cell, .login-input, .gs-input, .wq-input, .mono-cell, .stok-input,
+  .form-input:focus, .editable-cell:focus, .wq-input:focus {
     font-size: 16px !important;
+    line-height: 1.3 !important;
   }
   /* Field lebih tinggi & gampang disentuh (ramah lansia) */
-  .form-input, .login-input, .gs-input, select { min-height: 48px; padding: 12px 14px; }
-  .editable-cell { min-height: 38px; padding: 9px 10px; }
-  .form-label { font-size: 13px; }
-  .btn { min-height: 44px; font-size: 14px; }
-  .btn-sm { min-height: 36px; }
+  .form-input, .login-input, .gs-input, select { min-height: 50px; padding: 13px 14px; }
+  .editable-cell { min-height: 40px; padding: 10px; }
+  .wq-input { min-height: 46px; padding: 10px; }
+  .form-label { font-size: 13.5px; }
+  .btn { min-height: 46px; font-size: 14.5px; }
+  .btn-sm { min-height: 38px; }
 
   /* Teks lebih besar agar mudah dibaca orang tua */
-  .kpi-value { font-size: 21px; }
-  .kpi-value.xl { font-size: 26px; }
-  .kpi-label { font-size: 11px; }
-  .kpi-sub { font-size: 11px; }
-  .card-title { font-size: 15px; }
+  body { font-size: 15px; }
+  .kpi-value { font-size: 22px; }
+  .kpi-value.xl { font-size: 27px; }
+  .kpi-label { font-size: 11.5px; }
+  .kpi-sub { font-size: 11.5px; }
+  .card-title { font-size: 15.5px; }
   .hb-stat-label { font-size: 11px; }
   .hb-stat-val { font-size: 15px; }
-  table { font-size: 13px; }
+  table { font-size: 13.5px; }
+  td { font-size: 13.5px; }
   th { font-size: 11px; }
   .nav-label { font-size: 15px; }
   .nav-section { font-size: 11px; }
+  .chk-item { font-size: 14px; }
+  .card-sub, .muted, .text-muted { font-size: 12px; }
 
   .sync-bar { bottom: calc(var(--nav-h) + env(safe-area-inset-bottom)); position: fixed; left: 0; right: 0; z-index: 250; }
 }
@@ -1356,16 +1410,22 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
     <label class="login-label" data-id="label-nickname">Nama / Nickname</label>
     <input class="login-input" id="login-nickname" type="text" placeholder="Contoh: Fatchur, Pak Budi, Mandor..." maxlength="32" onkeydown="if(event.key==='Enter')doLogin()">
     <label class="login-label" style="margin-top:4px;" data-id="label-role">Peran / Role</label>
-    <select class="login-input" id="login-role" style="margin-bottom:16px;">
+    <select class="login-input" id="login-role" style="margin-bottom:16px;" onchange="onRoleChange()">
       <option value="owner">Owner / Investor</option>
       <option value="mandor">Mandor / Kepala Farm</option>
       <option value="karyawan">Karyawan / Penjaga Kolam</option>
     </select>
+    <div id="login-pass-wrap" style="display:none;margin-top:-6px;margin-bottom:16px;">
+      <label class="login-label" data-id="label-pass">Password Mandor</label>
+      <input class="login-input" id="login-pass" type="password" inputmode="numeric" placeholder="Masukkan password akses penuh" maxlength="12" onkeydown="if(event.key==='Enter')doLogin()" style="margin-bottom:0;">
+      <div id="login-pass-err" style="display:none;color:#ff8585;font-size:11px;margin-top:6px;">Password salah. Coba lagi.</div>
+      <div style="color:rgba(255,255,255,0.4);font-size:11px;margin-top:6px;" data-id="login-pass-hint">Mandor/Kepala Farm punya akses edit penuh ke semua halaman.</div>
+    </div>
     <button class="login-btn" onclick="doLogin()">
       <svg viewBox="0 0 20 20" fill="currentColor" width="16"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"/></svg>
       <span data-id="btn-masuk">Masuk ke Dashboard</span>
     </button>
-    <div style="text-align:center;margin-top:14px;font-size:11px;color:rgba(255,255,255,0.2);" data-id="login-note">Data tersimpan lokal & Google Sheets — tidak perlu password</div>
+    <div style="text-align:center;margin-top:14px;font-size:11px;color:rgba(255,255,255,0.3);line-height:1.6;" data-id="login-note">Owner & Karyawan: bisa edit halaman monitoring (Siklus, Air, Stok, SOP).<br>Mandor (password): akses edit penuh.</div>
   </div>
 </div>
 
@@ -2302,7 +2362,7 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
   <div class="card">
     <div class="card-head"><div class="card-title" data-id="card-catat-log">Catat Log Harian</div></div>
     <div class="card-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px;">
+      <div class="form-grid-2" style="gap:9px;margin-bottom:10px;">
         <div class="form-field"><label class="form-label" data-id="lbl-log-tgl">Tanggal</label><input type="date" class="form-input" id="log-tgl"></div>
         <div class="form-field"><label class="form-label" data-id="lbl-log-grup">Grup Kolam</label><select class="form-input" id="log-grup"><option>Grup A</option><option>Grup B</option><option>Grup C</option><option data-id="opt-semua">Semua</option></select></div>
       </div>
@@ -2332,6 +2392,67 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
       <tr><td data-id="param-suhu">Suhu</td><td>°C</td><td>26 – 30</td><td>24 – 32</td><td data-id="bahaya-suhu">&lt;20 atau &gt;35</td></tr>
       <tr><td data-id="param-keruh">Kekeruhan (Secchi)</td><td>cm</td><td>25 – 35</td><td>20 – 40</td><td data-id="bahaya-keruh">&gt;50 → aerasi kurang</td></tr>
     </tbody></table></div></div>
+  </div>
+</div>
+
+<!-- ═══ PAGE: SCAN STRUK ═══ -->
+<div class="page" id="page-scan">
+  <div class="hero-banner" style="padding:18px 22px;margin-bottom:14px;background:linear-gradient(135deg,#3E2C00,#7A5A12,#C8A44A);">
+    <div class="hb-label" data-id="scan-label">Scan Struk &amp; Nota</div>
+    <div class="hb-title" style="font-size:20px;"><em>Scan</em> Struk Pembelian</div>
+    <div class="hb-sub" data-id="scan-sub">Foto struk → otomatis terbaca → masuk Buku Kas + simpan bukti</div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="card-title" data-id="scan-card-upload">1. Foto / Upload Struk</div></div>
+    <div class="card-body">
+      <input type="file" id="scan-file-input" accept="image/*" capture="environment" style="display:none;" onchange="onScanFile(this)">
+      <div id="scan-dropzone" onclick="document.getElementById('scan-file-input').click()" style="border:2px dashed var(--c-border); border-radius:var(--r-lg); padding:28px 16px; text-align:center; cursor:pointer; background:var(--c-bg2); transition:var(--trans);">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="var(--c-gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:8px;"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><rect x="7" y="8" width="10" height="8" rx="1"/><circle cx="12" cy="12" r="2"/></svg>
+        <div style="font-weight:700;color:var(--c-text);font-size:15px;" data-id="scan-dz-title">Ketuk untuk foto / pilih gambar struk</div>
+        <div style="font-size:12px;color:var(--c-text3);margin-top:4px;" data-id="scan-dz-sub">Kamera akan terbuka di HP — atau pilih dari galeri (JPG/PNG)</div>
+      </div>
+      <div id="scan-preview-wrap" style="display:none;margin-top:14px;">
+        <img id="scan-preview-img" alt="Struk" style="width:100%;max-height:280px;object-fit:contain;border-radius:var(--r-md);border:1px solid var(--c-border2);background:var(--c-bg2);">
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn btn-primary" style="flex:1;" id="scan-process-btn" onclick="processScan()">
+            <svg viewBox="0 0 20 20" width="15" fill="currentColor"><path d="M9 3a6 6 0 104.47 10.03l3.75 3.75 1.41-1.41-3.75-3.75A6 6 0 009 3zm0 2a4 4 0 110 8 4 4 0 010-8z"/></svg>
+            <span data-id="scan-process">Baca Struk Otomatis</span>
+          </button>
+          <button class="btn btn-ghost" onclick="resetScan()" data-id="scan-reset">Ganti</button>
+        </div>
+      </div>
+      <div id="scan-status" style="display:none;margin-top:12px;padding:11px 13px;border-radius:var(--r-md);font-size:12.5px;"></div>
+    </div>
+  </div>
+
+  <div class="card" id="scan-form-card" style="display:none;">
+    <div class="card-head"><div class="card-title" data-id="scan-card-form">2. Detail Transaksi</div><span class="text-muted" style="font-size:11px;" data-id="scan-form-hint">Cek &amp; perbaiki bila perlu</span></div>
+    <div class="card-body">
+      <div id="scan-warn-banner" style="display:none;margin-bottom:12px;"></div>
+      <div class="form-grid-2" style="gap:10px;">
+        <div class="form-field"><label class="form-label" data-id="lbl-scan-tgl">Tanggal</label><input type="date" class="form-input" id="scan-tgl"></div>
+        <div class="form-field"><label class="form-label" data-id="lbl-scan-jumlah">Jumlah (Rp)</label><input type="number" class="form-input mono" id="scan-jumlah" placeholder="0"></div>
+      </div>
+      <div class="form-grid-2" style="gap:10px;">
+        <div class="form-field"><label class="form-label" data-id="lbl-scan-jenis">Jenis</label><select class="form-input" id="scan-jenis"><option value="keluar" data-id="opt-scan-keluar">Pengeluaran</option><option value="masuk" data-id="opt-scan-masuk">Pemasukan</option></select></div>
+        <div class="form-field"><label class="form-label" data-id="lbl-scan-kategori">Kategori</label><select class="form-input" id="scan-kategori"><option data-id="opt-pakan">Pakan</option><option data-id="opt-benih">Benih</option><option data-id="opt-obat">Obat &amp; Probiotik</option><option data-id="opt-alat">Peralatan</option><option data-id="opt-operasional">Operasional</option><option data-id="opt-gaji">Gaji</option><option data-id="opt-lain">Lain-lain</option></select></div>
+      </div>
+      <div class="form-field"><label class="form-label" data-id="lbl-scan-ket">Keterangan</label><input type="text" class="form-input" id="scan-keterangan" placeholder="Contoh: Beli pakan 781-2 di Toko Makmur"></div>
+      <details style="margin-bottom:12px;">
+        <summary style="font-size:12px;color:var(--c-text3);cursor:pointer;" data-id="scan-raw-toggle">Lihat teks hasil baca (OCR)</summary>
+        <pre id="scan-raw-text" style="white-space:pre-wrap;font-size:11px;color:var(--c-text2);background:var(--c-bg2);padding:10px;border-radius:8px;margin-top:8px;max-height:160px;overflow:auto;"></pre>
+      </details>
+      <button class="btn btn-primary" style="width:100%;" onclick="saveScanTransaction()">
+        <svg viewBox="0 0 20 20" width="15" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7l-4-4H5zm6 1.5V8H6V4.5h5zM6 11h8v4H6v-4z"/></svg>
+        <span data-id="scan-save">Simpan ke Buku Kas + Bukti</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="card-title" data-id="scan-card-log">Log Bukti Struk</div><span class="text-muted" id="scan-log-count" style="font-size:11px;">0 struk</span></div>
+    <div class="card-body"><div id="scan-log-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;"></div></div>
   </div>
 </div>
 
@@ -2740,17 +2861,17 @@ function doGet(e){
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
     <span data-id="bn-dashboard">Dashboard</span>
   </button>
-  <button class="bn-item" onclick="goPage('siklus')" id="bn-siklus">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-    <span data-id="bn-siklus">Siklus</span>
+  <button class="bn-item" onclick="goPage('sop')" id="bn-sop">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    <span data-id="bn-sop">SOP</span>
+  </button>
+  <button class="bn-item bn-scan" onclick="goPage('scan')" id="bn-scan">
+    <span class="bn-scan-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><path d="M7 12h10"/></svg></span>
+    <span data-id="bn-scan">Scan Struk</span>
   </button>
   <button class="bn-item" onclick="goPage('monitoring')" id="bn-monitoring">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2c-4 4-6 8-6 11a6 6 0 0012 0c0-3-2-7-6-11z"/></svg>
     <span data-id="bn-air">Air</span>
-  </button>
-  <button class="bn-item" onclick="goPage('stok')" id="bn-stok">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 00-2 2v8a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
-    <span data-id="bn-stok">Stok</span>
   </button>
   <button class="bn-item" id="bn-more" onclick="toggleMoreSheet()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></svg>
@@ -2762,10 +2883,11 @@ function doGet(e){
 <div class="bn-more-sheet" id="bn-more-sheet">
   <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.25);margin-bottom:10px;padding:0 2px;" data-id="more-sheet-title">Semua Fitur</div>
   <div class="bms-grid">
+    <div class="bms-item" onclick="goPageMore('siklus')"><div class="bms-icon"></div><span data-id="bms-siklus">Siklus</span></div>
+    <div class="bms-item" onclick="goPageMore('stok')"><div class="bms-icon"></div><span data-id="bms-stok">Stok</span></div>
     <div class="bms-item" onclick="goPageMore('biaya')"><div class="bms-icon"></div><span data-id="bms-biaya">Biaya</span></div>
     <div class="bms-item" onclick="goPageMore('proposal')"><div class="bms-icon"></div><span data-id="bms-proposal">Proposal</span></div>
     <div class="bms-item" onclick="goPageMore('modal')"><div class="bms-icon"></div><span data-id="bms-modal">Modal</span></div>
-    <div class="bms-item" onclick="goPageMore('sop')"><div class="bms-icon"></div><span>SOP</span></div>
     <div class="bms-item" onclick="goPageMore('grafik')"><div class="bms-icon"></div><span data-id="bms-grafik">Grafik</span></div>
     <div class="bms-item" onclick="goPageMore('hpp')"><div class="bms-icon"></div><span>HPP</span></div>
     <div class="bms-item" onclick="goPageMore('whatif')"><div class="bms-icon"></div><span data-id="bms-whatif">What-If</span></div>
@@ -2860,12 +2982,13 @@ function ic(name, cls){ const s=IC[name]||IC.check; return cls? s.replace('class
 //  Google Sheets yang sama — pengguna TIDAK perlu deploy/isi URL apa pun.
 //  Kosongkan ('') kalau mau tiap pengguna pasang URL-nya sendiri.
 //  Contoh: 'https://script.google.com/macros/s/AKfycb.../exec'
-const DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycbyERry03U2E_egkOOzbPpl_xlyjvta0SOYvFP9c4mh4rUKqmY8KfwzwdLl1SPaTLLXU/exec';
+const DEFAULT_GS_URL = '';
 const DEFAULT_GS_PROFILE = 'Bounte Farm';
 // ════════════════════════════════════════════════════════════════
 
 const APP = {
   user: null,        // {name, role}
+  canEditAll: true,  // hak edit semua halaman (Mandor w/ password). Default true utk sesi lama.
   profile: null,     // {diam, label}
   lang: 'id',
   dark: false,
@@ -2879,6 +3002,7 @@ const APP = {
   forecastLogs: [],  // log forecast siklus
   investors: [],
   transactions: [],
+  receipts: [],       // log bukti struk: {id, img, tgl, jumlah, jenis, kategori, ket}
   waterLogs: [],
   shiftLogs: [],
   insiden: [],
@@ -3035,12 +3159,34 @@ function applySystemTheme() {
   else setThemeIcon();
 }
 
-// ── LOGIN ──
+// ── LOGIN & HAK AKSES ──
+const MANDOR_PASS = '170500';
+// Halaman yang boleh diedit semua role (wajib dimonitor tiap saat + scan struk operasional)
+const MONITORING_PAGES = ['siklus','monitoring','stok','sop','scan'];
+
+function onRoleChange() {
+  const role = $('login-role')?.value;
+  const wrap = $('login-pass-wrap');
+  if (wrap) wrap.style.display = (role === 'mandor') ? 'block' : 'none';
+  const err = $('login-pass-err'); if (err) err.style.display = 'none';
+}
+
 function doLogin() {
   const name = $('login-nickname')?.value.trim();
   const role = $('login-role')?.value || 'owner';
   if (!name) { $('login-nickname').focus(); return; }
+  // Mandor wajib password untuk akses edit penuh
+  if (role === 'mandor') {
+    const pass = $('login-pass')?.value || '';
+    if (pass !== MANDOR_PASS) {
+      const err = $('login-pass-err'); if (err) err.style.display = 'block';
+      const wrap = $('login-pass-wrap'); if (wrap) wrap.style.display = 'block';
+      $('login-pass')?.focus();
+      return;
+    }
+  }
   APP.user = { name, role };
+  APP.canEditAll = (role === 'mandor'); // hanya Mandor (password benar) yang bisa edit semua
   $('login-screen').style.display = 'none';
   showProfileSelector();
 }
@@ -3101,6 +3247,7 @@ function enterProfile() {
   applyLogo();
   upgradeIcons();
   schedCharts();
+  applyPageLock(currentPage || 'dashboard');
   // Tarik data terbaru dari Google Sheets (kalau tersambung)
   if (APP.gsUrl) setTimeout(autoSyncOnLoad, 300);
 }
@@ -3166,13 +3313,13 @@ function goPage(page) {
 
   // Bottom nav
   $$('.bn-item').forEach(b => b.classList.remove('active'));
-  const bnMap = { dashboard:'bn-dashboard', siklus:'bn-siklus', monitoring:'bn-monitoring', stok:'bn-stok' };
+  const bnMap = { dashboard:'bn-dashboard', sop:'bn-sop', scan:'bn-scan', monitoring:'bn-monitoring' };
   $(bnMap[page] || 'bn-more')?.classList.add('active');
 
   // Topbar title
   const titles = {
     dashboard:'Dashboard', proposal:'Proposal Investor', modal:'Modal Kerja & Pembukuan',
-    siklus:'Siklus Panen', monitoring:'Kualitas Air', stok:'Stok Gudang',
+    siklus:'Siklus Panen', monitoring:'Kualitas Air', stok:'Stok Gudang', scan:'Scan Struk',
     sop:'SOP & Checklist', grafik:'Grafik & Analitik', hpp:'HPP & Harga Minimum',
     whatif:'Simulasi What-If', sinkronisasi:'Simpan & Sinkronisasi',
   };
@@ -3190,7 +3337,46 @@ function goPage(page) {
   if (page === 'whatif') calcWI();
   if (page === 'grafik') schedCharts();
   if (page === 'hpp') calcHPP();
+  if (page === 'scan') renderScanLog();
   if (page === 'sinkronisasi') { $('gs-url').value = APP.gsUrl; $('gs-profile-input').value = APP.gsProfile; }
+  applyPageLock(page);
+}
+
+// ── HAK AKSES PER HALAMAN ──
+// Mandor (canEditAll): semua halaman bisa diedit.
+// Selain itu: hanya halaman monitoring (Siklus, Air, Stok, SOP) yang bisa diedit; sisanya lihat-saja.
+function applyPageLock(page) {
+  const pageEl = $('page-' + page);
+  if (!pageEl) return;
+  const locked = !APP.canEditAll && !MONITORING_PAGES.includes(page);
+  // Banner info di atas halaman terkunci
+  let banner = pageEl.querySelector('.lock-banner');
+  if (locked) {
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.className = 'lock-banner';
+      banner.innerHTML = '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5 7V5a3 3 0 016 0v2"/></svg><span>Mode lihat-saja. Hanya <strong>Mandor/Kepala Farm</strong> (login + password) yang bisa mengubah halaman ini.</span>';
+      pageEl.insertBefore(banner, pageEl.firstChild);
+    }
+    banner.style.display = 'flex';
+  } else if (banner) {
+    banner.style.display = 'none';
+  }
+  // Nonaktifkan/aktifkan kontrol input dalam halaman
+  pageEl.querySelectorAll('input, select, textarea, button').forEach(el => {
+    if (el.closest('.lock-banner')) return;
+    // Jangan kunci tombol navigasi internal (sub-tab dashboard) agar tetap bisa lihat
+    const isNav = el.classList.contains('sub-tab-btn') || el.classList.contains('nav-item') || el.classList.contains('bn-item');
+    if (isNav) return;
+    if (locked) {
+      if (!el.dataset.lockApplied) { el.dataset.lockApplied = '1'; el.dataset.wasDisabled = el.disabled ? '1' : '0'; }
+      el.disabled = true;
+    } else if (el.dataset.lockApplied) {
+      el.disabled = (el.dataset.wasDisabled === '1');
+      delete el.dataset.lockApplied; delete el.dataset.wasDisabled;
+    }
+  });
+  pageEl.classList.toggle('page-locked', locked);
 }
 
 function switchSubTab(page, tab, btn) {
@@ -4296,6 +4482,195 @@ function updateModalKerja() {
   }
 }
 
+// ══════════════ SCAN STRUK (OCR) ══════════════
+function resizeImage(dataUrl, maxPx, quality, type) {
+  return new Promise((res) => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > h && w > maxPx) { h = Math.round(h*maxPx/w); w = maxPx; }
+      else if (h > maxPx) { w = Math.round(w*maxPx/h); h = maxPx; }
+      const c = document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      res(c.toDataURL(type||'image/jpeg', quality||0.7));
+    };
+    img.onerror = () => res(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
+function onScanFile(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    // Resize untuk OCR (maks 1400px) — cukup tajam tapi tidak terlalu berat
+    APP.scanImg = await resizeImage(e.target.result, 1400, 0.82, 'image/jpeg');
+    $('scan-preview-img').src = APP.scanImg;
+    $('scan-preview-wrap').style.display = 'block';
+    $('scan-dropzone').style.display = 'none';
+    $('scan-form-card').style.display = 'none';
+    setScanStatus('', '');
+    input.value = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+function resetScan() {
+  APP.scanImg = null;
+  $('scan-preview-wrap').style.display = 'none';
+  $('scan-dropzone').style.display = 'block';
+  $('scan-form-card').style.display = 'none';
+  setScanStatus('', '');
+}
+
+function setScanStatus(type, msg) {
+  const el = $('scan-status'); if (!el) return;
+  if (!msg) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  const map = {
+    loading: 'background:rgba(200,164,74,0.12);border:1px solid rgba(200,164,74,0.35);color:var(--c-text);',
+    ok: 'background:rgba(34,181,92,0.1);border:1px solid rgba(34,181,92,0.35);color:var(--c-text);',
+    warn: 'background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.4);color:var(--c-text);',
+    error: 'background:rgba(220,53,69,0.1);border:1px solid rgba(220,53,69,0.35);color:var(--c-text);',
+  };
+  el.style.cssText = 'margin-top:12px;padding:11px 13px;border-radius:var(--r-md);font-size:12.5px;display:block;' + (map[type]||map.loading);
+  el.textContent = msg;
+}
+
+let _tessLoading = null;
+function loadTesseract() {
+  if (window.Tesseract) return Promise.resolve();
+  if (_tessLoading) return _tessLoading;
+  _tessLoading = new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+    s.onload = () => res();
+    s.onerror = () => { _tessLoading = null; rej(new Error('Gagal memuat mesin OCR')); };
+    document.head.appendChild(s);
+  });
+  return _tessLoading;
+}
+
+async function processScan() {
+  if (!APP.scanImg) { alert('Foto/pilih struk dulu ya.'); return; }
+  const btn = $('scan-process-btn'); if (btn) btn.disabled = true;
+  setScanStatus('loading', 'Memuat mesin baca… (pertama kali agak lama, sekali saja)');
+  try {
+    await loadTesseract();
+    setScanStatus('loading', 'Membaca tulisan struk… 0%');
+    const { data } = await Tesseract.recognize(APP.scanImg, 'ind+eng', {
+      logger: m => { if (m.status === 'recognizing text') setScanStatus('loading', 'Membaca tulisan struk… ' + Math.round(m.progress*100) + '%'); }
+    });
+    const text = (data && data.text) ? data.text : '';
+    const parsed = parseReceiptText(text);
+    const readable = !!(parsed.amount && text.replace(/\s/g,'').length > 12);
+    fillScanForm(parsed, readable);
+  } catch (e) {
+    // OCR gagal total → tetap bisa isi manual
+    fillScanForm({ amount:null, date:null, desc:'', raw:'' }, false);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function parseReceiptText(text) {
+  const lines = (text||'').split('\n').map(l => l.trim()).filter(Boolean);
+  const amtKeywords = /(total|bayar|tunai|jumlah|grand|tagihan|harga)/i;
+  function parseNum(s) {
+    const m = s.match(/\d{1,3}(?:[.,]\d{3})+|\d{4,}/g);
+    if (!m) return 0;
+    let best = 0;
+    m.forEach(x => { const n = parseInt(x.replace(/[.,]/g,''), 10); if (n > best && n < 1e10) best = n; });
+    return best;
+  }
+  // Amount: prioritaskan baris dgn kata kunci TOTAL/BAYAR, ambil terbesar; fallback angka terbesar
+  let amount = 0;
+  for (const l of lines) { if (amtKeywords.test(l)) { const n = parseNum(l); if (n > amount) amount = n; } }
+  if (!amount) amount = parseNum(text);
+  // Tanggal
+  let date = null;
+  const dm = text.match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
+  if (dm) { let d=+dm[1], mo=+dm[2], y=+dm[3]; if (y<100) y+=2000; if (d>=1&&d<=31&&mo>=1&&mo<=12) date = `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+  // Keterangan: baris pertama yg ada hurufnya (biasanya nama toko)
+  let desc = '';
+  for (const l of lines) { if (/[a-z]/i.test(l) && l.replace(/[^a-z]/gi,'').length >= 3) { desc = l.slice(0, 45); break; } }
+  return { amount: amount||null, date, desc, raw: text };
+}
+
+function fillScanForm(parsed, readable) {
+  $('scan-form-card').style.display = 'block';
+  $('scan-tgl').value = parsed.date || today();
+  $('scan-jumlah').value = parsed.amount || '';
+  $('scan-keterangan').value = parsed.desc || '';
+  $('scan-raw-text').textContent = parsed.raw || '(tidak ada teks terbaca)';
+  const warn = $('scan-warn-banner');
+  if (!readable) {
+    setScanStatus('warn', '⚠ Tulisan struk tidak terbaca jelas. Silakan isi manual di bawah.');
+    warn.style.display = 'block';
+    warn.innerHTML = '<div style="display:flex;gap:9px;align-items:flex-start;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.4);border-radius:var(--r-md);padding:11px 13px;font-size:12.5px;line-height:1.5;"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="var(--c-amber)" stroke-width="1.6" style="flex-shrink:0;margin-top:1px;"><path d="M8 1.5L1 14h14L8 1.5z"/><path d="M8 6.5v3.2M8 11.5v.5"/></svg><span><strong>Tulisan tidak terbaca otomatis.</strong> Isi jumlah, tanggal & keterangan secara manual. Foto struk tetap tersimpan sebagai bukti.</span></div>';
+  } else {
+    setScanStatus('ok', '✓ Struk berhasil dibaca! Periksa datanya, lalu simpan.');
+    warn.style.display = 'none';
+  }
+  $('scan-form-card').scrollIntoView?.({ behavior:'smooth', block:'nearest' });
+}
+
+async function saveScanTransaction() {
+  const tgl = $('scan-tgl').value || today();
+  const jumlah = parseFloat($('scan-jumlah').value) || 0;
+  const jenis = $('scan-jenis').value;
+  const kategori = $('scan-kategori').value;
+  const ket = $('scan-keterangan').value.trim() || ('Struk ' + kategori);
+  if (!jumlah) { alert('Jumlah belum diisi. Isi nominal struk dulu ya.'); $('scan-jumlah').focus(); return; }
+  // 1) Masuk ke Buku Kas
+  APP.transactions.push({ id: Date.now(), tgl, jenis, kategori, jumlah, ket });
+  // 2) Simpan bukti struk (thumbnail kecil agar hemat memori)
+  const thumb = APP.scanImg ? await resizeImage(APP.scanImg, 640, 0.55, 'image/jpeg') : null;
+  APP.receipts.unshift({ id: Date.now(), img: thumb, tgl, jumlah, jenis, kategori, ket });
+  if (APP.receipts.length > 60) APP.receipts = APP.receipts.slice(0, 60); // batasi 60 bukti
+  renderKas(); renderScanLog();
+  saveLocal();
+  resetScan();
+  setScanStatus('ok', '✓ Tersimpan ke Buku Kas + bukti struk. Lihat di Modal Kerja → Buku Kas.');
+  setTimeout(() => setScanStatus('', ''), 4000);
+}
+
+function renderScanLog() {
+  const grid = $('scan-log-grid'); if (!grid) return;
+  const cnt = $('scan-log-count'); if (cnt) cnt.textContent = APP.receipts.length + ' struk';
+  if (!APP.receipts.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:18px;color:var(--c-text3);font-size:12.5px;">Belum ada bukti struk. Scan struk pertama kamu di atas.</div>';
+    return;
+  }
+  grid.innerHTML = APP.receipts.map(r => `
+    <div style="border:1px solid var(--c-border2);border-radius:var(--r-md);overflow:hidden;background:var(--c-surface);">
+      ${r.img ? `<img src="${r.img}" onclick="viewReceipt('${r.id}')" style="width:100%;height:110px;object-fit:cover;cursor:pointer;display:block;">` : `<div style="height:110px;display:flex;align-items:center;justify-content:center;color:var(--c-text3);font-size:11px;background:var(--c-bg2);">Tanpa gambar</div>`}
+      <div style="padding:8px 9px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:${r.jenis==='masuk'?'var(--c-jade)':'var(--c-ruby)'};">${r.jenis==='masuk'?'+':'-'}${fmt(r.jumlah)}</div>
+        <div style="font-size:10.5px;color:var(--c-text3);margin-top:2px;">${r.tgl} · ${r.kategori}</div>
+        <div style="font-size:11px;color:var(--c-text2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.ket||''}</div>
+        <button onclick="deleteReceipt('${r.id}')" style="margin-top:6px;width:100%;background:rgba(220,53,69,0.08);border:1px solid rgba(220,53,69,0.25);color:var(--c-ruby);border-radius:6px;padding:5px;font-size:11px;cursor:pointer;" data-id="scan-del">Hapus bukti</button>
+      </div>
+    </div>`).join('');
+}
+
+function viewReceipt(id) {
+  const r = APP.receipts.find(x => String(x.id) === String(id));
+  if (!r || !r.img) return;
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;';
+  ov.onclick = () => ov.remove();
+  ov.innerHTML = `<img src="${r.img}" style="max-width:100%;max-height:100%;border-radius:8px;">`;
+  document.body.appendChild(ov);
+}
+
+function deleteReceipt(id) {
+  if (!confirm('Hapus bukti struk ini? (Transaksi di Buku Kas tidak ikut terhapus)')) return;
+  APP.receipts = APP.receipts.filter(x => String(x.id) !== String(id));
+  renderScanLog(); saveLocal();
+}
+
 // ── BUKU KAS ──
 function tambahTransaksi() {
   const tgl = $('trx-tgl')?.value||today(), jenis=$('trx-jenis')?.value, kategori=$('trx-kategori')?.value;
@@ -4631,13 +5006,44 @@ function uploadLogo(input) {
   if (!/^image\/(png|jpe?g|svg\+xml|webp)$/.test(file.type)) {
     alert('File harus gambar (PNG, JPG, SVG, atau WebP).'); input.value=''; return;
   }
-  if (file.size > 1.5 * 1024 * 1024) {
-    alert('Ukuran logo maksimal 1.5 MB. Coba kompres atau perkecil dulu ya.'); input.value=''; return;
+  if (file.size > 3 * 1024 * 1024) {
+    alert('Ukuran logo maksimal 3 MB. Coba perkecil dulu ya.'); input.value=''; return;
   }
   const reader = new FileReader();
-  reader.onload = e => { APP.logo = e.target.result; applyLogo(); schedSave(); input.value=''; };
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    // SVG: simpan apa adanya (sudah ringan & vektor)
+    if (file.type === 'image/svg+xml') { finishLogo(dataUrl); return; }
+    // Raster (PNG/JPG/WebP): resize ke maks 256px + kompres → base64 kecil agar SYNC ke Sheets lancar
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 256;
+      let w = img.width, h = img.height;
+      if (w > h && w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      else if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,w,h);
+      ctx.drawImage(img, 0, 0, w, h);
+      // PNG transparan dipertahankan; kalau hasil PNG kebesaran, fallback JPEG
+      let out = canvas.toDataURL('image/png');
+      if (out.length > 60000) out = canvas.toDataURL('image/jpeg', 0.82);
+      finishLogo(out);
+    };
+    img.onerror = () => { alert('Gagal memproses gambar. Coba file lain.'); input.value=''; };
+    img.src = dataUrl;
+  };
   reader.onerror = () => { alert('Gagal membaca file. Coba lagi.'); input.value=''; };
   reader.readAsDataURL(file);
+  function finishLogo(data) {
+    APP.logo = data; applyLogo();
+    saveLocal();                 // simpan lokal + trigger push ke Sheets
+    if (APP.gsUrl) pushToSheets();
+    input.value='';
+    setSyncBar('saved', APP.gsUrl ? '✓ Logo tersimpan & disinkron' : '✓ Logo tersimpan');
+    setTimeout(() => setSyncBar('', T[APP.lang||'id']['sync-default']||'Data tersimpan lokal'), 2500);
+  }
 }
 
 function applyLogo() {
@@ -4811,12 +5217,25 @@ function saveLocal(opts) {
     // gsUrl & gsProfile disimpan di LEVEL ATAS → persist walau ganti profil / belum ada data
     localStorage.setItem('bounte_v11', JSON.stringify({
       profDiamData: APP.profDiamData, user: APP.user, lastProfile: APP.profile?.diam,
-      gsUrl: APP.gsUrl, gsProfile: APP.gsProfile
+      gsUrl: APP.gsUrl, gsProfile: APP.gsProfile, canEditAll: APP.canEditAll,
+      receipts: APP.receipts
     }));
     setSyncBar('saved', '✓ Tersimpan — '+new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}));
     setTimeout(() => setSyncBar('', T[APP.lang||'id']['sync-default']||'Data tersimpan lokal'), 2500);
     if (push && APP.gsUrl) pushDebounced();
-  } catch(e) {}
+  } catch(e) {
+    // localStorage penuh (biasanya gara2 bukti struk numpuk) → pangkas & coba lagi
+    if (e && (e.name === 'QuotaExceededError' || /quota/i.test(e.message||''))) {
+      try {
+        APP.receipts = (APP.receipts||[]).slice(0, 15);
+        localStorage.setItem('bounte_v11', JSON.stringify({
+          profDiamData: APP.profDiamData, user: APP.user, lastProfile: APP.profile?.diam,
+          gsUrl: APP.gsUrl, gsProfile: APP.gsProfile, canEditAll: APP.canEditAll, receipts: APP.receipts
+        }));
+        renderScanLog && renderScanLog();
+      } catch(_) {}
+    }
+  }
 }
 
 function loadLocal() {
@@ -4824,6 +5243,7 @@ function loadLocal() {
     const raw = localStorage.getItem('bounte_v11');
     const saved = raw ? JSON.parse(raw) : {};
     if (saved.profDiamData) APP.profDiamData = saved.profDiamData;
+    if (Array.isArray(saved.receipts)) APP.receipts = saved.receipts;
     // Pulihkan URL sync: pakai yang tersimpan, kalau kosong pakai DEFAULT (dari programmer)
     APP.gsUrl = saved.gsUrl || DEFAULT_GS_URL || '';
     APP.gsProfile = saved.gsProfile || DEFAULT_GS_PROFILE;
@@ -4883,6 +5303,7 @@ async function autoSyncOnLoad() {
     setGSStatus('ok', 'Tersambung — auto-sync aktif');
     setSyncBar('saved', '✓ Tersinkron dengan Google Sheets');
     setTimeout(() => setSyncBar('', T[APP.lang||'id']['sync-default']||'Data tersimpan lokal'), 2500);
+    applyPageLock(currentPage || 'dashboard');
   } catch(e) {
     setGSStatus('ok', 'Tersambung (mode offline — data lokal)');
   }
@@ -4983,6 +5404,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const saved = loadLocal();
   if (saved?.user) {
     APP.user = saved.user;
+    APP.canEditAll = (typeof saved.canEditAll === 'boolean') ? saved.canEditAll : (saved.user.role === 'mandor');
     APP.profDiamData = saved.profDiamData || {};
     const lastD = saved.lastProfile || 3;
     APP.profile = { diam: lastD, ...PROFILES[lastD] };
@@ -4992,6 +5414,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateProfileUI();
     const data = APP.profDiamData['d'+lastD];
     if (data) restoreData(data);
+    applyPageLock(currentPage || 'dashboard');
   }
   // Isi field URL & status koneksi Google Sheets (kalau ada/DEFAULT)
   const gu=$('gs-url'); if(gu) gu.value = APP.gsUrl || '';
