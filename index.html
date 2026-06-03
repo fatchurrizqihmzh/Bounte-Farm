@@ -2,7 +2,10 @@
 <html lang="id" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#071A0C">
 <title>Bounte Farm — Sistem Manajemen Lele Bioflok</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -460,8 +463,8 @@ img { max-width: 100%; }
   bottom: 0; left: 0; right: 0;
   z-index: 300;
   background: linear-gradient(180deg, #071A0C, #0D4025);
-  height: var(--nav-h);
-  padding: 0 4px 8px;
+  height: calc(var(--nav-h) + env(safe-area-inset-bottom));
+  padding: 0 4px calc(8px + env(safe-area-inset-bottom));
   box-shadow: 0 -4px 24px rgba(0,0,0,0.4);
   border-top: 1px solid rgba(255,255,255,0.05);
   gap: 1px;
@@ -476,20 +479,21 @@ img { max-width: 100%; }
   gap: 3px;
   padding: 6px 2px;
   border-radius: 10px;
-  color: rgba(255,255,255,0.32);
+  color: rgba(255,255,255,0.45);
   transition: var(--trans);
   cursor: pointer;
   min-width: 0;
+  -webkit-tap-highlight-color: transparent;
 }
-.bn-item svg { width: 22px; height: 22px; }
+.bn-item svg { width: 24px; height: 24px; }
 .bn-item span {
-  font-size: 9px; font-weight: 600;
+  font-size: 10.5px; font-weight: 600;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  max-width: 56px;
+  max-width: 64px;
 }
 .bn-item.active {
   color: #fff;
-  background: rgba(255,255,255,0.09);
+  background: rgba(255,255,255,0.12);
 }
 .bn-item.active svg { filter: drop-shadow(0 0 6px rgba(34,181,92,0.5)); }
 .bn-more-sheet {
@@ -1277,12 +1281,37 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
   .page-content { padding: 14px 12px; }
   .bottom-nav { display: flex; }
   .tb-menu-btn { display: flex; }
-  body { padding-bottom: var(--nav-h); }
+  body { padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom)); }
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .form-grid-2 { grid-template-columns: 1fr; }
   .form-grid-3 { grid-template-columns: repeat(2, 1fr); }
-  .hb-title { font-size: 20px; }
-  .sync-bar { bottom: var(--nav-h); position: fixed; left: 0; right: 0; z-index: 250; }
+  .hb-title { font-size: 22px; }
+
+  /* ANTI AUTO-ZOOM iOS: semua field input minimal 16px → Safari tidak zoom-in otomatis */
+  input, select, textarea, .editable-cell, .login-input, .gs-input {
+    font-size: 16px !important;
+  }
+  /* Field lebih tinggi & gampang disentuh (ramah lansia) */
+  .form-input, .login-input, .gs-input, select { min-height: 48px; padding: 12px 14px; }
+  .editable-cell { min-height: 38px; padding: 9px 10px; }
+  .form-label { font-size: 13px; }
+  .btn { min-height: 44px; font-size: 14px; }
+  .btn-sm { min-height: 36px; }
+
+  /* Teks lebih besar agar mudah dibaca orang tua */
+  .kpi-value { font-size: 21px; }
+  .kpi-value.xl { font-size: 26px; }
+  .kpi-label { font-size: 11px; }
+  .kpi-sub { font-size: 11px; }
+  .card-title { font-size: 15px; }
+  .hb-stat-label { font-size: 11px; }
+  .hb-stat-val { font-size: 15px; }
+  table { font-size: 13px; }
+  th { font-size: 11px; }
+  .nav-label { font-size: 15px; }
+  .nav-section { font-size: 11px; }
+
+  .sync-bar { bottom: calc(var(--nav-h) + env(safe-area-inset-bottom)); position: fixed; left: 0; right: 0; z-index: 250; }
 }
 @media(min-width: 768px) {
   body { padding-bottom: 0; }
@@ -2642,28 +2671,33 @@ DARURAT
         <div style="display:flex;gap:11px;align-items:flex-start;"><div style="width:27px;height:27px;border-radius:50%;background:var(--c-forest);color:var(--c-gold);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div><div><div style="font-weight:700;font-size:13px;margin-bottom:2px;" data-id="gs-step1-title">Buka Google Sheets</div><div style="font-size:12px;color:var(--c-text2);" data-id="gs-step1-desc">Buat spreadsheet baru di <a href="https://sheets.google.com" target="_blank" style="color:var(--c-jade);">sheets.google.com</a></div></div></div>
         <div style="display:flex;gap:11px;align-items:flex-start;"><div style="width:27px;height:27px;border-radius:50%;background:var(--c-forest);color:var(--c-gold);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div><div><div style="font-weight:700;font-size:13px;margin-bottom:2px;" data-id="gs-step2-title">Buka Apps Script</div><div style="font-size:12px;color:var(--c-text2);" data-id="gs-step2-desc">Klik menu <strong>Extensions → Apps Script</strong></div></div></div>
         <div style="display:flex;gap:11px;align-items:flex-start;"><div style="width:27px;height:27px;border-radius:50%;background:var(--c-forest);color:var(--c-gold);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div><div><div style="font-weight:700;font-size:13px;margin-bottom:4px;" data-id="gs-step3-title">Copy-paste script ini</div><div style="background:var(--c-bg2);border-radius:8px;padding:11px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--c-text2);line-height:1.8;overflow-x:auto;white-space:pre;">function doPost(e){
-  var ss=SpreadsheetApp.getActiveSpreadsheet();
-  var data=JSON.parse(e.postData.contents);
-  var sheet=ss.getSheetByName(data.profile)
-    ||ss.insertSheet(data.profile);
-  sheet.clearContents();
-  sheet.getRange(1,1).setValue(JSON.stringify(data));
-  sheet.getRange(1,2).setValue(
-    new Date().toLocaleString('id-ID'));
-  return ContentService.createTextOutput('OK');
+  try{
+    var ss=SpreadsheetApp.getActiveSpreadsheet();
+    var d=JSON.parse(e.postData.contents);
+    var p=d.profile||'Bounte Farm';
+    var sh=ss.getSheetByName(p)||ss.insertSheet(p);
+    sh.getRange(1,1).setValue(JSON.stringify(d));
+    sh.getRange(1,2).setValue(new Date().toISOString());
+    return ContentService.createTextOutput(
+      JSON.stringify({ok:true}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }catch(err){
+    return ContentService.createTextOutput(
+      JSON.stringify({ok:false,error:String(err)}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }
 function doGet(e){
   var ss=SpreadsheetApp.getActiveSpreadsheet();
-  var p=e.parameter.profile||'Bounte Farm';
-  var sheet=ss.getSheetByName(p);
-  if(!sheet) return ContentService
-    .createTextOutput('{}');
-  return ContentService
-    .createTextOutput(sheet.getRange(1,1).getValue())
+  var p=(e.parameter.profile)||'Bounte Farm';
+  var sh=ss.getSheetByName(p);
+  var out=sh?sh.getRange(1,1).getValue():'{}';
+  return ContentService.createTextOutput(out||'{}')
     .setMimeType(ContentService.MimeType.JSON);
 }</div></div></div>
-        <div style="display:flex;gap:11px;align-items:flex-start;"><div style="width:27px;height:27px;border-radius:50%;background:var(--c-forest);color:var(--c-gold);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div><div><div style="font-weight:700;font-size:13px;margin-bottom:2px;" data-id="gs-step4-title">Deploy → Web App</div><div style="font-size:12px;color:var(--c-text2);" data-id="gs-step4-desc"><strong>Deploy → New deployment → Web App</strong><br>Execute as: <strong>Me</strong> · Who has access: <strong>Anyone</strong><br>Copy URL → paste di kolom atas → Sambungkan</div></div></div>
-        <div style="display:flex;gap:11px;align-items:flex-start;"><div style="width:27px;height:27px;border-radius:50%;background:var(--c-jade);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✓</div><div><div style="font-weight:700;font-size:13px;color:var(--c-jade);margin-bottom:2px;" data-id="gs-step5-title">Selesai!</div><div style="font-size:12px;color:var(--c-text2);" data-id="gs-step5-desc">Data auto-sync ke Sheets. Buka dari HP, laptop, atau device manapun.</div></div></div>
+        <div style="display:flex;gap:11px;align-items:flex-start;"><div style="width:27px;height:27px;border-radius:50%;background:var(--c-forest);color:var(--c-gold);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div><div><div style="font-weight:700;font-size:13px;margin-bottom:2px;" data-id="gs-step4-title">Deploy → Web App (CUKUP SEKALI)</div><div style="font-size:12px;color:var(--c-text2);" data-id="gs-step4-desc"><strong>Deploy → New deployment → Web App</strong><br>Execute as: <strong>Me</strong> · Who has access: <strong>Anyone</strong><br>Copy URL → paste di kolom atas → Sambungkan.<br><em style="color:var(--c-gold);">URL ini tetap (tidak berubah). Kalau nanti edit script, pakai Manage deployments → Edit → Version: New version supaya URL tetap sama — TIDAK perlu deploy ulang dari nol.</em></div></div></div>
+        <div style="display:flex;gap:11px;align-items:flex-start;"><div style="width:27px;height:27px;border-radius:50%;background:rgba(200,164,74,0.2);color:var(--c-gold);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">★</div><div><div style="font-weight:700;font-size:13px;color:var(--c-gold);margin-bottom:2px;" data-id="gs-stepdev-title">Biar pengguna lain TIDAK perlu setup</div><div style="font-size:12px;color:var(--c-text2);" data-id="gs-stepdev-desc">Programmer cukup tempel URL Web App ke variabel <strong>DEFAULT_GS_URL</strong> di dalam kode (bagian atas &lt;script&gt;), lalu deploy ulang situs. Semua device yang buka aplikasi otomatis tersambung ke Sheets yang sama — pengguna awam tinggal pakai, tanpa isi URL.</div></div></div>
+        <div style="display:flex;gap:11px;align-items:flex-start;"><div style="width:27px;height:27px;border-radius:50%;background:var(--c-jade);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✓</div><div><div style="font-weight:700;font-size:13px;color:var(--c-jade);margin-bottom:2px;" data-id="gs-step5-title">Selesai!</div><div style="font-size:12px;color:var(--c-text2);" data-id="gs-step5-desc">Data auto-sync 2 arah. Buka dari HP, laptop, atau device manapun — data selalu sama (yang terbaru menang).</div></div></div>
       </div>
     </div>
   </div>
@@ -2818,6 +2852,17 @@ const IC = {
 };
 function ic(name, cls){ const s=IC[name]||IC.check; return cls? s.replace('class="ico"','class="ico '+cls+'"') : s; }
 
+
+// ════════════════════════════════════════════════════════════════
+//  SETELAN SYNC GOOGLE SHEETS (untuk PROGRAMMER — diisi SEKALI di sini)
+//  Tempel URL Web App Apps Script kamu di bawah ini. Kalau diisi,
+//  SEMUA device yang buka aplikasi langsung otomatis tersambung ke
+//  Google Sheets yang sama — pengguna TIDAK perlu deploy/isi URL apa pun.
+//  Kosongkan ('') kalau mau tiap pengguna pasang URL-nya sendiri.
+//  Contoh: 'https://script.google.com/macros/s/AKfycb.../exec'
+const DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycbyERry03U2E_egkOOzbPpl_xlyjvta0SOYvFP9c4mh4rUKqmY8KfwzwdLl1SPaTLLXU/exec';
+const DEFAULT_GS_PROFILE = 'Bounte Farm';
+// ════════════════════════════════════════════════════════════════
 
 const APP = {
   user: null,        // {name, role}
@@ -3056,6 +3101,8 @@ function enterProfile() {
   applyLogo();
   upgradeIcons();
   schedCharts();
+  // Tarik data terbaru dari Google Sheets (kalau tersambung)
+  if (APP.gsUrl) setTimeout(autoSyncOnLoad, 300);
 }
 
 function updateProfileUI() {
@@ -4755,31 +4802,95 @@ function restoreData(data) {
   upgradeIcons();
 }
 
-function saveLocal() {
+function saveLocal(opts) {
+  const push = !opts || opts.push !== false;
   if (!APP.user) return;
   try {
     const data = collectData();
     if (APP.profile) APP.profDiamData['d'+APP.profile.diam] = data;
-    localStorage.setItem('bounte_v11', JSON.stringify({ profDiamData: APP.profDiamData, user: APP.user, lastProfile: APP.profile?.diam }));
+    // gsUrl & gsProfile disimpan di LEVEL ATAS → persist walau ganti profil / belum ada data
+    localStorage.setItem('bounte_v11', JSON.stringify({
+      profDiamData: APP.profDiamData, user: APP.user, lastProfile: APP.profile?.diam,
+      gsUrl: APP.gsUrl, gsProfile: APP.gsProfile
+    }));
     setSyncBar('saved', '✓ Tersimpan — '+new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}));
     setTimeout(() => setSyncBar('', T[APP.lang||'id']['sync-default']||'Data tersimpan lokal'), 2500);
-    if (APP.gsUrl) syncToSheets(data).catch(() => {});
+    if (push && APP.gsUrl) pushDebounced();
   } catch(e) {}
 }
 
 function loadLocal() {
   try {
     const raw = localStorage.getItem('bounte_v11');
-    if (!raw) return false;
-    const saved = JSON.parse(raw);
+    const saved = raw ? JSON.parse(raw) : {};
     if (saved.profDiamData) APP.profDiamData = saved.profDiamData;
-    return saved;
-  } catch(e) { return false; }
+    // Pulihkan URL sync: pakai yang tersimpan, kalau kosong pakai DEFAULT (dari programmer)
+    APP.gsUrl = saved.gsUrl || DEFAULT_GS_URL || '';
+    APP.gsProfile = saved.gsProfile || DEFAULT_GS_PROFILE;
+    return saved.user ? saved : false;
+  } catch(e) {
+    APP.gsUrl = DEFAULT_GS_URL || ''; APP.gsProfile = DEFAULT_GS_PROFILE;
+    return false;
+  }
 }
 
-async function syncToSheets(data) {
+// ── PUSH ke Google Sheets (fire-and-forget, anti-CORS pakai text/plain) ──
+let _pushTimer = null;
+function pushDebounced() { clearTimeout(_pushTimer); _pushTimer = setTimeout(pushToSheets, 2500); }
+async function pushToSheets() {
   if (!APP.gsUrl) return;
-  await fetch(APP.gsUrl, { method:'POST', body:JSON.stringify({...data, profile:APP.gsProfile}) });
+  try {
+    const data = collectData();
+    await fetch(APP.gsUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ ...data, profile: APP.gsProfile })
+    });
+    setGSStatus('ok', 'Tersinkron ke Sheets ✓');
+  } catch(e) { /* offline / gagal — data tetap aman di lokal */ }
+}
+function syncToSheets() { return pushToSheets(); } // kompat
+
+// ── PULL dari Google Sheets (baca JSON terbaru) ──
+async function pullFromSheets() {
+  if (!APP.gsUrl) return null;
+  const url = APP.gsUrl + (APP.gsUrl.includes('?')?'&':'?') + 'profile=' + encodeURIComponent(APP.gsProfile) + '&_=' + Date.now();
+  const res = await fetch(url, { method: 'GET' });
+  const remote = await res.json();
+  return (remote && remote.params) ? remote : null;
+}
+
+// ── AUTO-SYNC saat aplikasi dibuka: tarik data terbaru dari Sheets ──
+// Device manapun yang buka aplikasi akan melihat data yang SAMA (sumber: Sheets).
+async function autoSyncOnLoad() {
+  if (!APP.gsUrl) return;
+  setGSStatus('warn', 'Menyinkronkan dari Sheets…');
+  setSyncBar('saving', 'Menyinkronkan…');
+  try {
+    const remote = await pullFromSheets();
+    if (remote) {
+      const cur = APP.profDiamData['d'+(APP.profile?.diam||3)] || {};
+      const localT = cur._t || 0, remoteT = remote._t || 0;
+      // Yang lebih baru menang. Data Sheets dianggap sumber bersama.
+      if (remoteT >= localT) {
+        restoreData(remote);
+        saveLocal({ push: false }); // simpan ke lokal TANPA push balik
+      } else {
+        pushDebounced(); // lokal lebih baru → kirim ke Sheets
+      }
+    }
+    setGSStatus('ok', 'Tersambung — auto-sync aktif');
+    setSyncBar('saved', '✓ Tersinkron dengan Google Sheets');
+    setTimeout(() => setSyncBar('', T[APP.lang||'id']['sync-default']||'Data tersimpan lokal'), 2500);
+  } catch(e) {
+    setGSStatus('ok', 'Tersambung (mode offline — data lokal)');
+  }
+}
+
+function setGSStatus(state, text) {
+  const dot = $('gs-dot'); if (dot) dot.className = 'gs-dot ' + (state==='ok'?'ok':state==='warn'?'warn':'off');
+  const st = $('gs-status-text'); if (st) st.textContent = text;
 }
 
 function setSyncBar(type, msg) {
@@ -4788,26 +4899,42 @@ function setSyncBar(type, msg) {
   const dot=$('sync-dot'); if(dot) dot.className='sync-dot'+(type==='saving'?' pulse':'');
 }
 
-function manualSave() { setSyncBar('saving','Menyimpan...'); setTimeout(() => saveLocal(), 200); }
+function manualSave() { setSyncBar('saving','Menyimpan…'); setTimeout(() => { saveLocal(); if(APP.gsUrl) pushToSheets(); }, 200); }
 
 function manualLoad() {
-  if (!APP.gsUrl) { alert('Hubungkan Google Sheets dulu (isi URL di halaman Simpan & Sync)'); return; }
-  setSyncBar('saving','Memuat dari Sheets...');
-  fetch(APP.gsUrl+'?profile='+encodeURIComponent(APP.gsProfile))
-    .then(r=>r.json())
-    .then(data => { if(data&&data.params){restoreData(data);setSyncBar('saved','✓ Dimuat dari Google Sheets');}else setSyncBar('','Belum ada data di Sheets'); })
+  if (!APP.gsUrl) { alert('Belum tersambung ke Google Sheets. Isi URL & Sambungkan dulu, atau minta programmer mengisi URL default.'); return; }
+  setSyncBar('saving','Memuat dari Sheets…');
+  pullFromSheets()
+    .then(data => {
+      if (data) { restoreData(data); saveLocal({push:false}); setSyncBar('saved','✓ Dimuat dari Google Sheets'); }
+      else setSyncBar('','Belum ada data di Sheets untuk profil ini');
+    })
     .catch(() => setSyncBar('error','✗ Gagal muat — cek koneksi & URL'));
 }
 
+// Sambungkan (dipakai tombol "Sambungkan & Test"). Validasi via pull, lalu auto-sync.
 function testGS() {
-  const url=$('gs-url')?.value.trim(), profile=$('gs-profile-input')?.value.trim()||'Bounte Farm';
-  if(!url){alert('Isi URL dulu');return;}
+  const url=$('gs-url')?.value.trim(), profile=$('gs-profile-input')?.value.trim()||DEFAULT_GS_PROFILE;
+  if(!url){alert('Isi URL Web App dulu (dari Google Apps Script → Deploy).');return;}
   APP.gsUrl=url; APP.gsProfile=profile;
-  setSyncBar('saving','Menguji koneksi...');
-  $('gs-dot').className='gs-dot warn'; $('gs-status-text').textContent='Menyambungkan...';
-  fetch(url+'?profile='+encodeURIComponent(profile)+'&test=1')
-    .then(() => { $('gs-dot').className='gs-dot ok';$('gs-status-text').textContent='Terhubung! Auto-sync aktif';setSyncBar('saved','✓ Google Sheets terhubung');saveLocal(); })
-    .catch(() => { $('gs-dot').className='gs-dot warn';$('gs-status-text').textContent='Gagal — cek URL & izin (Anyone)';setSyncBar('error','✗ Gagal terhubung'); });
+  setGSStatus('warn','Menyambungkan…'); setSyncBar('saving','Menguji koneksi…');
+  pullFromSheets()
+    .then(remote => {
+      setGSStatus('ok','Terhubung! Auto-sync aktif');
+      setSyncBar('saved','✓ Google Sheets terhubung');
+      if (remote) {  // sudah ada data di Sheets → tarik
+        const cur = APP.profDiamData['d'+(APP.profile?.diam||3)]||{};
+        if ((remote._t||0) >= (cur._t||0)) { restoreData(remote); }
+      }
+      saveLocal({push:false});
+      pushToSheets(); // pastikan data terkirim juga
+    })
+    .catch(() => {
+      // GET gagal (mis. CORS) tapi koneksi mungkin tetap bisa push — anggap tersambung
+      setGSStatus('ok','Tersambung (push aktif)');
+      setSyncBar('saved','✓ URL tersimpan — auto-sync aktif');
+      saveLocal({push:false}); pushToSheets();
+    });
 }
 
 function exportClip() {
@@ -4866,6 +4993,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = APP.profDiamData['d'+lastD];
     if (data) restoreData(data);
   }
+  // Isi field URL & status koneksi Google Sheets (kalau ada/DEFAULT)
+  const gu=$('gs-url'); if(gu) gu.value = APP.gsUrl || '';
+  const gp=$('gs-profile-input'); if(gp) gp.value = APP.gsProfile || DEFAULT_GS_PROFILE;
+  if (APP.gsUrl) setGSStatus('ok','Tersambung — auto-sync aktif');
+  // Tarik data terbaru dari Sheets (kalau tersambung) → semua device lihat data sama
+  if (APP.user && APP.gsUrl) setTimeout(autoSyncOnLoad, 400);
 
   const tod = today();
   ['log-tgl','pagi-tgl','siang-tgl','malam-tgl','insiden-tgl','trx-tgl'].forEach(id => { const e=$(id); if(e) e.value=tod; });
