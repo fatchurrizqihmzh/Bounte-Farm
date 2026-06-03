@@ -135,7 +135,7 @@ img { max-width: 100%; }
   box-shadow: 4px 0 24px rgba(0,0,0,0.35);
 }
 .sidebar-brand {
-  padding: 20px 18px 16px;
+  padding: calc(20px + env(safe-area-inset-top)) 18px 16px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
   flex-shrink: 0;
 }
@@ -346,11 +346,13 @@ img { max-width: 100%; }
 /* Topbar */
 .topbar {
   background: var(--c-surface);
-  height: var(--topbar-h);
+  height: calc(var(--topbar-h) + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
   border-bottom: 1px solid var(--c-border);
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding-left: 20px;
+  padding-right: 20px;
   position: sticky;
   top: 0;
   z-index: 200;
@@ -1194,7 +1196,8 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
   position: fixed; inset: 0; z-index: 9999;
   background: linear-gradient(135deg, #071A0C 0%, #0D4025 50%, #0A1F0E 100%);
   display: flex; align-items: center; justify-content: center;
-  padding: 20px;
+  padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
+  overflow-y: auto;
 }
 .login-card {
   background: rgba(255,255,255,0.05);
@@ -1330,6 +1333,7 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
   .form-grid-2 { grid-template-columns: 1fr; }
   .form-grid-3 { grid-template-columns: repeat(2, 1fr); }
   .cycle-inputs { grid-template-columns: 1fr !important; }
+  .m-stack { grid-template-columns: 1fr !important; }
   .hb-title { font-size: 22px; }
 
   /* ANTI AUTO-ZOOM iOS: SEMUA field input minimal 16px → Safari tidak zoom-in otomatis */
@@ -2496,7 +2500,7 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
       <div style="display:flex;align-items:center;gap:8px;"><span class="mono-cell text-green" id="pagi-done" style="font-size:13px;font-weight:700;">0/0</span><button class="btn btn-primary btn-sm" onclick="simpanShift('pagi')" data-id="btn-simpan-shift">Simpan</button></div>
     </div>
     <div class="card-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--c-border2);">
+      <div class="m-stack" style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--c-border2);">
         <div class="form-field"><label class="form-label" data-id="lbl-shift-tgl">Tanggal</label><input type="date" class="form-input" id="pagi-tgl"></div>
         <div class="form-field"><label class="form-label" data-id="lbl-shift-petugas">Nama Petugas</label><input type="text" class="form-input" id="pagi-petugas" placeholder="Nama karyawan jaga"></div>
         <div class="form-field"><label class="form-label" data-id="lbl-shift-cuaca">Kondisi Cuaca</label><select class="form-input" id="pagi-cuaca"><option data-id="opt-cerah">Cerah</option><option data-id="opt-berawan">Berawan</option><option data-id="opt-hujan">Hujan</option><option data-id="opt-hujan-deras">Hujan Deras</option></select></div>
@@ -2512,7 +2516,7 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
       <div style="display:flex;align-items:center;gap:8px;"><span class="mono-cell text-green" id="siang-done" style="font-size:13px;font-weight:700;">0/0</span><button class="btn btn-primary btn-sm" onclick="simpanShift('siang')" data-id="btn-simpan-shift2">Simpan</button></div>
     </div>
     <div class="card-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--c-border2);">
+      <div class="m-stack" style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--c-border2);">
         <div class="form-field"><label class="form-label" data-id="lbl-siang-tgl">Tanggal</label><input type="date" class="form-input" id="siang-tgl"></div>
         <div class="form-field"><label class="form-label" data-id="lbl-siang-petugas">Nama Petugas</label><input type="text" class="form-input" id="siang-petugas" placeholder="Nama karyawan jaga"></div>
         <div class="form-field"><label class="form-label" data-id="lbl-siang-kondisi">Kondisi Kolam</label><select class="form-input" id="siang-kondisi"><option data-id="opt-normal">Normal</option><option data-id="opt-perlu">Perlu Perhatian</option><option data-id="opt-kritis">Kritis</option></select></div>
@@ -2528,7 +2532,7 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
       <div style="display:flex;align-items:center;gap:8px;"><span class="mono-cell text-green" id="malam-done" style="font-size:13px;font-weight:700;">0/0</span><button class="btn btn-primary btn-sm" onclick="simpanShift('malam')" data-id="btn-simpan-shift3">Simpan</button></div>
     </div>
     <div class="card-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--c-border2);">
+      <div class="m-stack" style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--c-border2);">
         <div class="form-field"><label class="form-label" data-id="lbl-malam-tgl">Tanggal</label><input type="date" class="form-input" id="malam-tgl"></div>
         <div class="form-field"><label class="form-label" data-id="lbl-malam-petugas">Nama Petugas</label><input type="text" class="form-input" id="malam-petugas" placeholder="Nama karyawan jaga"></div>
         <div class="form-field"><label class="form-label" data-id="lbl-malam-aerator">Status Aerator</label><select class="form-input" id="malam-aerator"><option data-id="opt-aerator-ok">Semua Normal</option><option data-id="opt-aerator-cek">1-2 Kolam Perlu Cek</option><option data-id="opt-aerator-masalah">Ada Masalah</option></select></div>
@@ -2548,7 +2552,7 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
   <div class="card">
     <div class="card-head"><div class="card-title" style="color:var(--c-ruby);" data-id="card-insiden">Log Insiden / Kejadian Darurat</div></div>
     <div class="card-body">
-      <div style="display:grid;grid-template-columns:130px 1fr auto;gap:9px;margin-bottom:12px;align-items:end;">
+      <div class="m-stack" style="display:grid;grid-template-columns:1fr;gap:9px;margin-bottom:12px;">
         <div class="form-field"><label class="form-label" data-id="lbl-insiden-tgl">Tanggal</label><input type="date" class="form-input" id="insiden-tgl"></div>
         <div class="form-field"><label class="form-label" data-id="lbl-insiden-desc">Deskripsi & Tindakan</label><input type="text" class="form-input" id="insiden-desc" placeholder="Contoh: Listrik mati jam 02:00, DO turun ke 2.1, aerator darurat dinyalakan..."></div>
         <button class="btn btn-danger" onclick="tambahInsiden()" data-id="btn-catat-insiden">+ Catat</button>
@@ -2619,7 +2623,7 @@ DARURAT
   <div class="card mt12">
     <div class="card-head"><div class="card-title" data-id="card-target-vs-real">Target vs Realisasi Produksi</div></div>
     <div class="card-body">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px;">
+      <div class="m-stack" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px;">
         <div class="form-field"><label class="form-label" data-id="lbl-target-panen">Target Panen/Bln (kg)</label><input class="form-input mono" id="target-panen" type="number" placeholder="8800"></div>
         <div class="form-field"><label class="form-label" data-id="lbl-real-panen">Realisasi Panen (kg)</label><input class="form-input mono" id="real-panen" type="number" placeholder="8500" oninput="updateTargetChart()"></div>
         <div class="form-field"><label class="form-label" data-id="lbl-target-laba">Target Laba/Bln (Rp)</label><input class="form-input mono" id="target-laba" type="number" placeholder="12000000"></div>
@@ -2873,9 +2877,9 @@ function doGet(e){
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2c-4 4-6 8-6 11a6 6 0 0012 0c0-3-2-7-6-11z"/></svg>
     <span data-id="bn-air">Air</span>
   </button>
-  <button class="bn-item" id="bn-more" onclick="toggleMoreSheet()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></svg>
-    <span data-id="bn-more">Lainnya</span>
+  <button class="bn-item" onclick="goPage('stok')" id="bn-stok">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 00-2 2v8a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+    <span data-id="bn-stok">Stok</span>
   </button>
 </nav>
 
@@ -2896,7 +2900,7 @@ function doGet(e){
 </div>
 
 <!-- REMINDER PANEL -->
-<div id="reminder-panel" style="display:none;position:fixed;top:var(--topbar-h);right:14px;z-index:400;background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);width:320px;max-height:400px;overflow-y:auto;">
+<div id="reminder-panel" style="display:none;position:fixed;top:calc(var(--topbar-h) + env(safe-area-inset-top));right:14px;z-index:400;background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);width:320px;max-height:400px;overflow-y:auto;">
   <div style="padding:14px 16px;border-bottom:1px solid var(--c-border2);display:flex;align-items:center;justify-content:space-between;">
     <div style="font-size:13.5px;font-weight:700;color:var(--c-text);" data-id="reminder-title">Reminder & Notifikasi</div>
     <button onclick="hideReminders()" style="background:none;border:none;color:var(--c-text3);font-size:16px;cursor:pointer;">✕</button>
@@ -2982,13 +2986,14 @@ function ic(name, cls){ const s=IC[name]||IC.check; return cls? s.replace('class
 //  Google Sheets yang sama — pengguna TIDAK perlu deploy/isi URL apa pun.
 //  Kosongkan ('') kalau mau tiap pengguna pasang URL-nya sendiri.
 //  Contoh: 'https://script.google.com/macros/s/AKfycb.../exec'
-const DEFAULT_GS_URL = '';
+const DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycbyERry03U2E_egkOOzbPpl_xlyjvta0SOYvFP9c4mh4rUKqmY8KfwzwdLl1SPaTLLXU/exec';
 const DEFAULT_GS_PROFILE = 'Bounte Farm';
 // ════════════════════════════════════════════════════════════════
 
 const APP = {
   user: null,        // {name, role}
   canEditAll: true,  // hak edit semua halaman (Mandor w/ password). Default true utk sesi lama.
+  bootT: 0,          // timestamp data lokal saat boot (utk merge sync)
   profile: null,     // {diam, label}
   lang: 'id',
   dark: false,
@@ -3313,8 +3318,8 @@ function goPage(page) {
 
   // Bottom nav
   $$('.bn-item').forEach(b => b.classList.remove('active'));
-  const bnMap = { dashboard:'bn-dashboard', sop:'bn-sop', scan:'bn-scan', monitoring:'bn-monitoring' };
-  $(bnMap[page] || 'bn-more')?.classList.add('active');
+  const bnMap = { dashboard:'bn-dashboard', sop:'bn-sop', scan:'bn-scan', monitoring:'bn-monitoring', stok:'bn-stok' };
+  if (bnMap[page]) $(bnMap[page])?.classList.add('active');
 
   // Topbar title
   const titles = {
@@ -5244,6 +5249,9 @@ function loadLocal() {
     const saved = raw ? JSON.parse(raw) : {};
     if (saved.profDiamData) APP.profDiamData = saved.profDiamData;
     if (Array.isArray(saved.receipts)) APP.receipts = saved.receipts;
+    // Timestamp data lokal SAAT BOOT (sebelum enterProfile menyimpan ulang) → utk merge sync yang benar
+    const bd = saved.profDiamData && saved.profDiamData['d'+(saved.lastProfile||3)];
+    APP.bootT = (bd && bd._t) || 0;
     // Pulihkan URL sync: pakai yang tersimpan, kalau kosong pakai DEFAULT (dari programmer)
     APP.gsUrl = saved.gsUrl || DEFAULT_GS_URL || '';
     APP.gsProfile = saved.gsProfile || DEFAULT_GS_PROFILE;
@@ -5290,15 +5298,20 @@ async function autoSyncOnLoad() {
   try {
     const remote = await pullFromSheets();
     if (remote) {
-      const cur = APP.profDiamData['d'+(APP.profile?.diam||3)] || {};
-      const localT = cur._t || 0, remoteT = remote._t || 0;
-      // Yang lebih baru menang. Data Sheets dianggap sumber bersama.
+      // Pakai timestamp SAAT BOOT, bukan yang sudah di-resave enterProfile,
+      // supaya device baru selalu menarik data terbaru dari Sheets.
+      const localT = (typeof APP.bootT === 'number') ? APP.bootT : 0;
+      const remoteT = remote._t || 0;
       if (remoteT >= localT) {
         restoreData(remote);
-        saveLocal({ push: false }); // simpan ke lokal TANPA push balik
+        APP.bootT = remoteT;          // selaras dengan remote
+        saveLocal({ push: false });   // simpan ke lokal TANPA push balik
       } else {
-        pushDebounced(); // lokal lebih baru → kirim ke Sheets
+        pushToSheets(); // lokal lebih baru → kirim ke Sheets
       }
+    } else {
+      // Sheet masih kosong → seed dengan data lokal device ini
+      pushToSheets();
     }
     setGSStatus('ok', 'Tersambung — auto-sync aktif');
     setSyncBar('saved', '✓ Tersinkron dengan Google Sheets');
