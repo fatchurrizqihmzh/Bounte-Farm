@@ -3285,12 +3285,17 @@ function selectProf(d) {
 
 function enterProfile() {
   if (!APP.profile) { selectProf(3); }
+  // ⬇ FIX ISOLASI PROFIL: batalkan autosave antri dari profil sebelumnya
+  clearTimeout(_saveTimer);
   const ps = $('profile-screen'); ps.classList.remove('visible');
   const shell = $('app-shell'); shell.style.display = 'flex';
   updateProfileUI();
   // Load saved data for this profile
   const saved = APP.profDiamData['d' + APP.profile.diam];
   if (saved) restoreData(saved);
+  // ⬇ FIX ISOLASI PROFIL: profil KOSONG → reset tampilan ke DEFAULT bersih
+  //    supaya tidak mewarisi/menampilkan data profil yang dibuka sebelumnya.
+  else if (window.DEFAULT_PROFILE_DATA) { restoreData(window.DEFAULT_PROFILE_DATA); syncGroups(); rebuildCycles(); recalcAll(); }
   else { syncGroups(); rebuildCycles(); recalcAll(); }
   // sinkron dropdown diameter layout ke profil
   const ld = $('layout-diameter'); if (ld) ld.value = APP.profile.diam;
@@ -3302,6 +3307,8 @@ function enterProfile() {
   upgradeIcons();
   schedCharts();
   applyPageLock(currentPage || 'dashboard');
+  // ⬇ FIX ISOLASI PROFIL: buka kunci save — DOM kini sudah cocok dgn profil aktif
+  APP._onProfileScreen = false;
   // Tarik data terbaru dari Google Sheets (kalau tersambung)
   if (APP.gsUrl) setTimeout(autoSyncOnLoad, 300);
 }
@@ -3334,8 +3341,12 @@ function deleteProfile() {
 }
 
 function switchProfile() {
-  // Save current profile data first
-  schedSave();
+  // ⬇ FIX ISOLASI PROFIL: batalkan autosave yang masih antri, lalu commit data
+  //    profil AKTIF ke slotnya SEKARANG (sinkron). Kunci agar tak ada save nyasar
+  //    selama berada di layar pilih-profil.
+  clearTimeout(_saveTimer);
+  saveLocal({ push: false });
+  APP._onProfileScreen = true;
   $('profile-screen').classList.add('visible');
   buildProfGrid();
 }
@@ -5270,8 +5281,12 @@ function saveLocal(opts) {
   const push = !opts || opts.push !== false;
   if (!APP.user) return;
   try {
-    const data = collectData();
-    if (APP.profile) APP.profDiamData['d'+APP.profile.diam] = data;
+    // ⬇ FIX ISOLASI PROFIL: jangan lipat data DOM ke slot profil saat sedang
+    //    di layar pilih-profil (APP.profile sudah pindah, tapi DOM masih data lama).
+    if (!APP._onProfileScreen) {
+      const data = collectData();
+      if (APP.profile) APP.profDiamData['d'+APP.profile.diam] = data;
+    }
     // gsUrl & gsProfile disimpan di LEVEL ATAS → persist walau ganti profil / belum ada data
     localStorage.setItem('bounte_v11', JSON.stringify({
       profDiamData: APP.profDiamData, user: APP.user, lastProfile: APP.profile?.diam,
@@ -5316,6 +5331,13 @@ function loadLocal() {
 }
 
 // ── PUSH ke Google Sheets (fire-and-forget, anti-CORS pakai text/plain) ──
+// ⬇ FIX ISOLASI PROFIL: tiap diameter punya "profil cloud" sendiri di Sheets,
+//    supaya data antar-diameter tidak saling menimpa lewat sinkronisasi.
+function gsKey() {
+  const base = APP.gsProfile || DEFAULT_GS_PROFILE;
+  const d = APP.profile?.diam || 3;
+  return base + ' \u00B7 \u00D8' + d + 'm';
+}
 let _pushTimer = null;
 function pushDebounced() { clearTimeout(_pushTimer); _pushTimer = setTimeout(pushToSheets, 2500); }
 async function pushToSheets() {
@@ -5326,7 +5348,7 @@ async function pushToSheets() {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ ...data, profile: APP.gsProfile })
+      body: JSON.stringify({ ...data, profile: gsKey() })
     });
     setGSStatus('ok', 'Tersinkron ke Sheets ✓');
   } catch(e) { /* offline / gagal — data tetap aman di lokal */ }
@@ -5336,7 +5358,7 @@ function syncToSheets() { return pushToSheets(); } // kompat
 // ── PULL dari Google Sheets (baca JSON terbaru) ──
 async function pullFromSheets() {
   if (!APP.gsUrl) return null;
-  const url = APP.gsUrl + (APP.gsUrl.includes('?')?'&':'?') + 'profile=' + encodeURIComponent(APP.gsProfile) + '&_=' + Date.now();
+  const url = APP.gsUrl + (APP.gsUrl.includes('?')?'&':'?') + 'profile=' + encodeURIComponent(gsKey()) + '&_=' + Date.now();
   const res = await fetch(url, { method: 'GET' });
   const remote = await res.json();
   return (remote && remote.params) ? remote : null;
@@ -5353,7 +5375,9 @@ async function autoSyncOnLoad() {
     if (remote) {
       // Pakai timestamp SAAT BOOT, bukan yang sudah di-resave enterProfile,
       // supaya device baru selalu menarik data terbaru dari Sheets.
-      const localT = (typeof APP.bootT === 'number') ? APP.bootT : 0;
+      // ⬇ FIX ISOLASI PROFIL: bandingkan dgn timestamp lokal milik DIAMETER AKTIF
+      //    (bukan bootT global), supaya merge per-profil benar saat ganti profil.
+      const localT = APP.profDiamData['d'+(APP.profile?.diam||3)]?._t || (typeof APP.bootT==='number'?APP.bootT:0);
       const remoteT = remote._t || 0;
       if (remoteT >= localT) {
         restoreData(remote);
@@ -5466,6 +5490,13 @@ function upgradeIcons() {
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
+  // ⬇ FIX ISOLASI PROFIL: rekam state DEFAULT bersih (dari HTML) SEBELUM data tersimpan dimuat.
+  //    Dipakai untuk mereset tampilan saat membuka profil yang masih kosong.
+  //    Field GLOBAL (tema, bahasa, logo, URL/nama Sheets) dikeluarkan agar tidak ikut ter-reset.
+  try {
+    window.DEFAULT_PROFILE_DATA = JSON.parse(JSON.stringify(collectData()));
+    ['_t','gsUrl','gsProfile','lang','dark','logo'].forEach(k => delete window.DEFAULT_PROFILE_DATA[k]);
+  } catch(e){}
   // Try auto-login from saved session
   const saved = loadLocal();
   if (saved?.user) {
