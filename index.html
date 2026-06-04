@@ -642,6 +642,8 @@ img { max-width: 100%; }
 }
 .card-icon svg { width: 16px; height: 16px; }
 .card-body { padding: 18px; }
+.sec-note { padding: 8px 18px 0; font-size: 11.5px; color: var(--c-text3); display: flex; align-items: flex-start; gap: 8px; line-height: 1.55; }
+.sec-note .badge { flex-shrink: 0; margin-top: 1px; }
 
 /* Hero banner */
 .hero-banner {
@@ -867,7 +869,8 @@ input[type=date], input[type=time], input[type=datetime-local] {
 input[type=date]::-webkit-date-and-time-value { text-align: left; padding: 0; margin: 0; min-width: 0; }
 input[type=date]::-webkit-calendar-picker-indicator { margin: 0 0 0 auto; padding: 0; flex-shrink: 0; }
 input[type=date]::-webkit-inner-spin-button { display: none; }
-.form-field { margin-bottom: 12px; min-width: 0; }
+.form-field { margin-bottom: 12px; min-width: 0; display: flex; flex-direction: column; }
+.form-field > .form-input, .form-field > select.form-input { margin-top: auto; }
 .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 
@@ -1119,6 +1122,14 @@ td { padding: 9px 12px; color: var(--c-text); }
 .si-bar { height: 4px; background: var(--c-border2); border-radius: 4px; overflow: hidden; margin-bottom: 3px; }
 .si-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
 .si-days { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; }
+@media(max-width:767px){
+  .stok-item { flex-wrap: wrap; row-gap: 11px; align-items: flex-end; padding: 12px 13px; gap: 8px; }
+  .si-name { flex: 1 1 56%; order: 1; min-width: 0; }
+  .si-progress { order: 2; flex: 1 1 38%; max-width: none; min-width: 0; display: flex; flex-direction: column; align-items: flex-end; }
+  .si-inputs { order: 3; flex: 1 1 100%; gap: 8px; justify-content: space-between; }
+  .si-inputs > div { flex: 1 1 0; min-width: 0; }
+  .si-input { width: 100%; box-sizing: border-box; }
+}
 
 /* Water quality inputs */
 .wq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; margin-bottom: 12px; }
@@ -1360,7 +1371,7 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
 
 /* RESPONSIVE */
 @media(max-width: 767px) {
-  .sidebar { transform: translateX(-100%); }
+  .sidebar { transform: translateX(-100%); padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom)); }
   .sidebar.mobile-open { transform: translateX(0); }
   .main-area { margin-left: 0; }
   .page-content { padding: 14px 12px; }
@@ -1814,9 +1825,9 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
           </div>
           <span data-id="card-inv-infra">Investasi Awal — Infrastruktur</span>
         </div>
-        <span class="mono-cell gold" id="inv-infra-total-disp" style="font-size:14px;">Rp 0</span>
+        <span class="mono-cell gold" id="inv-infra-total-disp" style="font-size:14px;margin-left:auto;">Rp 0</span>
       </div>
-      <div style="padding:8px 16px 0;font-size:11.5px;color:var(--c-text3);display:flex;align-items:center;gap:6px;"><span class="badge badge-gold" id="inv-infra-scale-badge">× 1 kolam</span> <span>Qty &amp; total otomatis ikut jumlah kolam (tiap kolam butuh infra sendiri)</span></div>
+      <div class="sec-note"><span class="badge badge-gold" id="inv-infra-scale-badge">× 1 kolam</span> <span>Qty &amp; total otomatis ikut jumlah kolam (tiap kolam butuh infra sendiri)</span></div>
       <div class="card-body" style="padding:0;">
         <div class="tbl-wrap"><table>
           <thead><tr><th data-id="th-item">Item</th><th>Qty</th><th data-id="th-unit">Unit</th><th data-id="th-harga-sat">Harga Satuan</th><th>Total</th><th data-id="th-ket">Keterangan</th><th></th></tr></thead>
@@ -1863,9 +1874,9 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
           </div>
           <span data-id="card-inv-starter">Investasi Awal — Alat Starter Kit</span>
         </div>
-        <span class="mono-cell" style="color:#0EA5E9;font-size:14px;" id="inv-starter-total-disp">Rp 0</span>
+        <span class="mono-cell" style="color:#0EA5E9;font-size:14px;margin-left:auto;" id="inv-starter-total-disp">Rp 0</span>
       </div>
-      <div style="padding:8px 16px 0;font-size:11.5px;color:var(--c-text3);display:flex;align-items:center;gap:6px;"><span class="badge" style="background:rgba(14,165,233,0.12);color:#0EA5E9;">Sekali beli</span> <span>Cukup 1 set untuk semua kolam — TIDAK dikali jumlah kolam</span></div>
+      <div class="sec-note"><span class="badge" style="background:rgba(14,165,233,0.12);color:#0EA5E9;">Sekali beli</span> <span>Cukup 1 set untuk semua kolam — TIDAK dikali jumlah kolam</span></div>
       <div class="card-body" style="padding:0;">
         <div class="tbl-wrap"><table>
           <thead><tr><th data-id="th-item">Item</th><th>Qty</th><th data-id="th-unit">Unit</th><th data-id="th-harga-sat">Harga Satuan</th><th>Total</th><th data-id="th-ket">Keterangan</th><th></th></tr></thead>
@@ -1891,9 +1902,9 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
           </div>
           <span data-id="card-biaya-ops">Biaya Operasional / Siklus</span>
         </div>
-        <span class="mono-cell red" id="ops-total-disp" style="font-size:14px;">Rp 0</span>
+        <span class="mono-cell red" id="ops-total-disp" style="font-size:14px;margin-left:auto;">Rp 0</span>
       </div>
-      <div style="padding:8px 16px 0;font-size:11.5px;color:var(--c-text3);display:flex;align-items:center;gap:6px;"><span class="badge badge-ruby" id="ops-scale-badge">× 1 kolam</span> <span>Konsumabel ikut jumlah kolam; gaji tetap (flat). Pakan auto dari Fase × FCR.</span></div>
+      <div class="sec-note"><span class="badge badge-ruby" id="ops-scale-badge">× 1 kolam</span> <span>Konsumabel ikut jumlah kolam; gaji tetap (flat). Pakan auto dari Fase × FCR.</span></div>
       <div class="card-body" style="padding:0;">
         <div class="tbl-wrap"><table>
           <thead><tr><th>No</th><th data-id="th-komponen">Komponen</th><th>Qty</th><th data-id="th-unit2">Unit</th><th data-id="th-harga-sat2">Harga Satuan</th><th>Total</th><th data-id="th-ket2">Keterangan</th><th></th></tr></thead>
@@ -3331,6 +3342,7 @@ function switchProfile() {
 
 function doLogout() {
   if (!confirm('Yakin mau keluar?')) return;
+  closeSidebar();
   APP.user = null; APP.profile = null;
   $('app-shell').style.display = 'none';
   $('profile-screen').classList.remove('visible');
