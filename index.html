@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#071A0C">
-<title>Bounte Farm v12.14 — Sistem Manajemen Lele Bioflok</title>
+<title>Bounte Farm v12.15 — Sistem Manajemen Lele Bioflok</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════
@@ -1531,7 +1531,7 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
         </div>
         <div>
           <div class="brand-name"><em>Bounte</em> Farm</div>
-          <div class="brand-tag">Lele Bioflok · Terpadu · v12.14</div>
+          <div class="brand-tag">Lele Bioflok · Terpadu · v12.15</div>
         </div>
       </div>
     </div>
@@ -5341,19 +5341,35 @@ function gsKey() {
   return DEFAULT_GS_PROFILE + ' \u00B7 \u00D8' + d + 'm';
 }
 let _pushTimer = null;
-function pushDebounced() { clearTimeout(_pushTimer); _pushTimer = setTimeout(pushToSheets, 2500); }
+let _pushPending = false;   // ada edit yang belum sempat terkirim ke Sheets?
+function pushDebounced() { _pushPending = true; clearTimeout(_pushTimer); _pushTimer = setTimeout(pushToSheets, 2500); }
+function _pushBody() { return JSON.stringify({ ...collectData(), profile: gsKey() }); }
 async function pushToSheets() {
   if (!APP.gsUrl) return;
+  clearTimeout(_pushTimer);
+  _pushPending = false;
   try {
-    const data = collectData();
     await fetch(APP.gsUrl, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ ...data, profile: gsKey() })
+      body: _pushBody()
     });
     setGSStatus('ok', 'Tersinkron ke Sheets ✓');
-  } catch(e) { /* offline / gagal — data tetap aman di lokal */ }
+  } catch(e) { _pushPending = true; /* offline / gagal — coba lagi nanti, data aman di lokal */ }
+}
+// ⬇ DUA ARAH ANDAL DI HP: kirim PAKSA edit yang tertunda sebelum halaman di-background/ditutup.
+//    sendBeacon dijamin dikirim browser walau tab disuspend (iOS sering membekukan tab HP),
+//    jadi edit dari HP tetap sampai ke website meski layar langsung dikunci setelah edit.
+function flushPush() {
+  if (!APP.gsUrl || !_pushPending) return;
+  clearTimeout(_pushTimer);
+  _pushPending = false;
+  try {
+    const blob = new Blob([_pushBody()], { type: 'text/plain;charset=utf-8' });
+    const ok = navigator.sendBeacon && navigator.sendBeacon(APP.gsUrl, blob);
+    if (!ok) pushToSheets();   // fallback kalau beacon ditolak / tak tersedia
+  } catch(e) { try { pushToSheets(); } catch(_){} }
 }
 function syncToSheets() { return pushToSheets(); } // kompat
 
@@ -5524,9 +5540,14 @@ function startAutoPull() {
   if (!APP.gsUrl) return;
   _pullPoll = setInterval(() => bgPull(false), 15000);   // cek Sheets tiap 15 detik
 }
-// Tarik SEGERA saat aplikasi kembali aktif/fokus (mis. pindah HP → desktop, atau buka tab lagi)
-document.addEventListener('visibilitychange', () => { if (!document.hidden) bgPull(true); });
+// Dua arah otomatis: saat MAU ke background → kirim paksa edit tertunda; saat BALIK aktif → tarik perubahan.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) flushPush();   // tab disembunyikan → pastikan edit HP terkirim dulu
+  else bgPull(true);                  // tab aktif lagi → tarik versi terbaru dari Sheets
+});
 window.addEventListener('focus', () => bgPull(true));
+window.addEventListener('blur', flushPush);       // pindah app/jendela → kirim paksa edit tertunda
+window.addEventListener('pagehide', flushPush);   // tab/app ditutup → kirim paksa edit tertunda
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
