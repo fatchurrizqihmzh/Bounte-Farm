@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#071A0C">
-<title>Bounte Farm — Sistem Manajemen Lele Bioflok</title>
+<title>Bounte Farm v12.14 — Sistem Manajemen Lele Bioflok</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════
@@ -1531,7 +1531,7 @@ input[type=range] { width: 100%; accent-color: var(--c-jade); cursor: pointer; h
         </div>
         <div>
           <div class="brand-name"><em>Bounte</em> Farm</div>
-          <div class="brand-tag">Lele Bioflok · Terpadu</div>
+          <div class="brand-tag">Lele Bioflok · Terpadu · v12.14</div>
         </div>
       </div>
     </div>
@@ -2834,7 +2834,7 @@ DARURAT
     <label class="login-label" style="color:rgba(255,255,255,0.42);margin-bottom:5px;" data-id="gs-url-label">Web App URL (dari Google Apps Script)</label>
     <input class="gs-input" id="gs-url" type="url" placeholder="https://script.google.com/macros/s/AKf.../exec">
     <label class="login-label" style="color:rgba(255,255,255,0.42);margin-bottom:5px;" data-id="gs-profile-label">Nama Profil / Farm</label>
-    <input class="gs-input" id="gs-profile-input" type="text" placeholder="Bounte Farm — Kolam 5m" value="Bounte Farm">
+    <input class="gs-input" id="gs-profile-input" type="text" placeholder="Bounte Farm" value="Bounte Farm" readonly title="Nama profil cloud dikunci otomatis. Tiap diameter punya slot sendiri di Sheets, dan SEMUA perangkat memakai slot yang sama — jadi data tidak terpecah antar HP & desktop." style="opacity:.65;cursor:not-allowed;">
     <button class="gs-btn" onclick="testGS()" data-id="btn-connect-gs"><svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;"><path d="M6.5 9.5l3-3M7 4.5l1-1a2.5 2.5 0 013.5 3.5l-1 1M9 11.5l-1 1A2.5 2.5 0 014.5 9l1-1"/></svg>Sambungkan & Test</button>
   </div>
 
@@ -3310,7 +3310,7 @@ function enterProfile() {
   // ⬇ FIX ISOLASI PROFIL: buka kunci save — DOM kini sudah cocok dgn profil aktif
   APP._onProfileScreen = false;
   // Tarik data terbaru dari Google Sheets (kalau tersambung)
-  if (APP.gsUrl) setTimeout(autoSyncOnLoad, 300);
+  if (APP.gsUrl) { setTimeout(autoSyncOnLoad, 300); startAutoPull(); }
 }
 
 function updateProfileUI() {
@@ -5295,7 +5295,7 @@ function saveLocal(opts) {
     }));
     setSyncBar('saved', '✓ Tersimpan — '+new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}));
     setTimeout(() => setSyncBar('', T[APP.lang||'id']['sync-default']||'Data tersimpan lokal'), 2500);
-    if (push && APP.gsUrl) pushDebounced();
+    if (push) { _lastLocalEdit = Date.now(); if (APP.gsUrl) pushDebounced(); }
   } catch(e) {
     // localStorage penuh (biasanya gara2 bukti struk numpuk) → pangkas & coba lagi
     if (e && (e.name === 'QuotaExceededError' || /quota/i.test(e.message||''))) {
@@ -5334,9 +5334,11 @@ function loadLocal() {
 // ⬇ FIX ISOLASI PROFIL: tiap diameter punya "profil cloud" sendiri di Sheets,
 //    supaya data antar-diameter tidak saling menimpa lewat sinkronisasi.
 function gsKey() {
-  const base = APP.gsProfile || DEFAULT_GS_PROFILE;
+  // ⬇ AUTO-SYNC: kunci cloud DIKUNCI ke konstanta (bukan nama yang diketik user),
+  //    supaya SEMUA perangkat memetakan diameter yang sama ke slot cloud yang sama.
+  //    Format dipertahankan ("Bounte Farm · Ø{d}m") agar data lama di Sheets tetap kebaca.
   const d = APP.profile?.diam || 3;
-  return base + ' \u00B7 \u00D8' + d + 'm';
+  return DEFAULT_GS_PROFILE + ' \u00B7 \u00D8' + d + 'm';
 }
 let _pushTimer = null;
 function pushDebounced() { clearTimeout(_pushTimer); _pushTimer = setTimeout(pushToSheets, 2500); }
@@ -5427,7 +5429,7 @@ function manualLoad() {
 function testGS() {
   const url=$('gs-url')?.value.trim(), profile=$('gs-profile-input')?.value.trim()||DEFAULT_GS_PROFILE;
   if(!url){alert('Isi URL Web App dulu (dari Google Apps Script → Deploy).');return;}
-  APP.gsUrl=url; APP.gsProfile=profile;
+  APP.gsUrl=url; APP.gsProfile=DEFAULT_GS_PROFILE;  // nama cloud dikunci → perangkat tak bisa nyasar slot
   setGSStatus('warn','Menyambungkan…'); setSyncBar('saving','Menguji koneksi…');
   pullFromSheets()
     .then(remote => {
@@ -5439,12 +5441,13 @@ function testGS() {
       }
       saveLocal({push:false});
       pushToSheets(); // pastikan data terkirim juga
+      startAutoPull();
     })
     .catch(() => {
       // GET gagal (mis. CORS) tapi koneksi mungkin tetap bisa push — anggap tersambung
       setGSStatus('ok','Tersambung (push aktif)');
       setSyncBar('saved','✓ URL tersimpan — auto-sync aktif');
-      saveLocal({push:false}); pushToSheets();
+      saveLocal({push:false}); pushToSheets(); startAutoPull();
     });
 }
 
@@ -5488,6 +5491,43 @@ function upgradeIcons() {
   Object.entries(slots).forEach(([id,name]) => { const el=$(id); if(el && !el.dataset.iconified){ el.innerHTML=ic(name, id.includes('big')?'ico-lg':''); el.dataset.iconified='1'; } });
 }
 
+// ── AUTO-SYNC TANPA TOMBOL: tarik perubahan dari Sheets secara berkala + saat tab aktif ──
+let _lastLocalEdit = 0;
+let _pullPoll = null;
+function _isEditing() {
+  const el = document.activeElement; if (!el) return false;
+  const t = el.tagName;
+  return t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT' || el.isContentEditable;
+}
+async function bgPull(force) {
+  if (!APP.gsUrl || !APP.user || !APP.profile) return;
+  if (APP._onProfileScreen) return;               // jangan saat di layar pilih-profil
+  if (!force && document.hidden) return;          // saat tab tersembunyi, tunggu balik fokus
+  if (!force && _isEditing()) return;             // jangan timpa saat user sedang mengetik
+  if (!force && Date.now() - _lastLocalEdit < 6000) return; // beri prioritas push edit terbaru
+  try {
+    const remote = await pullFromSheets();
+    if (!remote) return;
+    const localT  = APP.profDiamData['d'+(APP.profile?.diam||3)]?._t || (typeof APP.bootT==='number'?APP.bootT:0);
+    const remoteT = remote._t || 0;
+    if (remoteT > localT && !_isEditing()) {      // ada versi lebih baru → terapkan otomatis
+      restoreData(remote);
+      APP.bootT = remoteT;
+      saveLocal({ push: false });                 // simpan lokal TANPA push balik
+      setSyncBar('saved', '✓ Tersinkron otomatis');
+      setTimeout(() => setSyncBar('', T[APP.lang||'id']['sync-default']||'Data tersimpan lokal'), 2000);
+    }
+  } catch(e) { /* offline / gagal — abaikan, coba lagi siklus berikutnya */ }
+}
+function startAutoPull() {
+  clearInterval(_pullPoll);
+  if (!APP.gsUrl) return;
+  _pullPoll = setInterval(() => bgPull(false), 15000);   // cek Sheets tiap 15 detik
+}
+// Tarik SEGERA saat aplikasi kembali aktif/fokus (mis. pindah HP → desktop, atau buka tab lagi)
+document.addEventListener('visibilitychange', () => { if (!document.hidden) bgPull(true); });
+window.addEventListener('focus', () => bgPull(true));
+
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
   // ⬇ FIX ISOLASI PROFIL: rekam state DEFAULT bersih (dari HTML) SEBELUM data tersimpan dimuat.
@@ -5518,7 +5558,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const gp=$('gs-profile-input'); if(gp) gp.value = APP.gsProfile || DEFAULT_GS_PROFILE;
   if (APP.gsUrl) setGSStatus('ok','Tersambung — auto-sync aktif');
   // Tarik data terbaru dari Sheets (kalau tersambung) → semua device lihat data sama
-  if (APP.user && APP.gsUrl) setTimeout(autoSyncOnLoad, 400);
+  if (APP.user && APP.gsUrl) { setTimeout(autoSyncOnLoad, 400); startAutoPull(); }
 
   const tod = today();
   ['log-tgl','pagi-tgl','siang-tgl','malam-tgl','insiden-tgl','trx-tgl'].forEach(id => { const e=$(id); if(e) e.value=tod; });
